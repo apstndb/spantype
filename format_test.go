@@ -18,10 +18,10 @@ func TestFormatType(t *testing.T) {
 		{
 			desc:         "UNKNOWN",
 			typ:          &sppb.Type{Code: -1},
-			wantSimplest: "UNKNOWN",
-			wantSimple:   "UNKNOWN",
-			wantNormal:   "UNKNOWN",
-			wantVerbose:  "UNKNOWN",
+			wantSimplest: "UNKNOWN(-1)",
+			wantSimple:   "UNKNOWN(-1)",
+			wantNormal:   "UNKNOWN(-1)",
+			wantVerbose:  "UNKNOWN(-1)",
 		},
 		{
 			desc:         "TYPE_CODE_UNSPECIFIED",

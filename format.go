@@ -119,10 +119,14 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		return fmt.Sprintf("STRUCT<%v>", FormatStructFields(typ.GetStructType().GetFields(), opts))
 	}
 
+	return FormatTypeCode(code)
+}
+
+func FormatTypeCode(code sppb.TypeCode) string {
 	if name, ok := sppb.TypeCode_name[int32(code)]; ok {
 		return name
 	} else {
-		return "UNKNOWN"
+		return fmt.Sprintf("UNKNOWN(%v)", int32(code))
 	}
 }
 
