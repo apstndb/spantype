@@ -22,9 +22,9 @@ type ProtoMode int
 const (
 	// ProtoModeBase prints `PROTO` type as `PROTO`
 	ProtoModeBase ProtoMode = iota
-	// ProtoModeLeaf prints `PROTO` type without package name. e.g. `Proto`
+	// ProtoModeLeaf prints `PROTO` type without package name. e.g. `ProtoType`
 	ProtoModeLeaf
-	// ProtoModeFull prints `PROTO` type as full qualified name. e.g. `examples.Proto`
+	// ProtoModeFull prints `PROTO` type as full qualified name. e.g. `examples.ProtoType`
 	ProtoModeFull
 )
 
@@ -33,9 +33,9 @@ type EnumMode int
 const (
 	// EnumModeBase prints `ENUM` type as `ENUM`.
 	EnumModeBase EnumMode = iota
-	// EnumModeLeaf prints `ENUM` type without package name. e.g. `Enum`
+	// EnumModeLeaf prints `ENUM` type without package name. e.g. `EnumType`
 	EnumModeLeaf
-	// EnumModeFull prints `ENUM` type as full qualified name. e.g. `examples.Enum`
+	// EnumModeFull prints `ENUM` type as full qualified name. e.g. `examples.EnumType`
 	EnumModeFull
 )
 
