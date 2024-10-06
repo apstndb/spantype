@@ -107,6 +107,22 @@ func TestFormatType(t *testing.T) {
 			wantVerbose:  "ARRAY<INT64>",
 			wantNormal:   "ARRAY<INT64>",
 		},
+		{
+			desc:         "NUMERIC",
+			typ:          &sppb.Type{Code: sppb.TypeCode_NUMERIC},
+			wantSimplest: "NUMERIC",
+			wantSimple:   "NUMERIC",
+			wantVerbose:  "NUMERIC",
+			wantNormal:   "NUMERIC",
+		},
+		{
+			desc:         "JSON",
+			typ:          &sppb.Type{Code: sppb.TypeCode_JSON},
+			wantSimplest: "JSON",
+			wantSimple:   "JSON",
+			wantVerbose:  "JSON",
+			wantNormal:   "JSON",
+		},
 		// STRUCT
 		{
 			desc: "STRUCT with name",
@@ -133,22 +149,6 @@ func TestFormatType(t *testing.T) {
 			wantSimple:   "STRUCT",
 			wantVerbose:  "STRUCT<arr ARRAY<STRUCT<n INT64>>>",
 			wantNormal:   "STRUCT<ARRAY<STRUCT<INT64>>>",
-		},
-		{
-			desc:         "NUMERIC",
-			typ:          &sppb.Type{Code: sppb.TypeCode_NUMERIC},
-			wantSimplest: "NUMERIC",
-			wantSimple:   "NUMERIC",
-			wantVerbose:  "NUMERIC",
-			wantNormal:   "NUMERIC",
-		},
-		{
-			desc:         "JSON",
-			typ:          &sppb.Type{Code: sppb.TypeCode_JSON},
-			wantSimplest: "JSON",
-			wantSimple:   "JSON",
-			wantVerbose:  "JSON",
-			wantNormal:   "JSON",
 		},
 		{
 			desc: "STRUCT without name",
