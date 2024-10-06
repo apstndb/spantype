@@ -1,4 +1,4 @@
-module spantype
+module github.com/apstndb/spantype
 
 go 1.21
 

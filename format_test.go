@@ -2,7 +2,7 @@ package spantype_test
 
 import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	"spantype"
+	"github.com/apstndb/spantype"
 	"testing"
 )
 
@@ -21,6 +21,7 @@ func TestFormatType(t *testing.T) {
 			wantSimplest: "UNKNOWN",
 			wantSimple:   "UNKNOWN",
 			wantVerbose:  "UNKNOWN",
+			wantNormal:   "UNKNOWN",
 		},
 		{
 			desc:         "TYPE_CODE_UNSPECIFIED",
@@ -180,6 +181,9 @@ func TestFormatType(t *testing.T) {
 			}
 			if got := spantype.FormatTypeSimplest(tt.typ); tt.wantSimplest != got {
 				t.Errorf("FormatTypeSimplest want: %v, got: %v", tt.wantSimplest, got)
+			}
+			if got := spantype.FormatTypeNormal(tt.typ); tt.wantNormal != got {
+				t.Errorf("FormatTypeNormal want: %v, got: %v", tt.wantNormal, got)
 			}
 			if got := spantype.FormatTypeVerbose(tt.typ); tt.wantVerbose != got {
 				t.Errorf("FormatTypeVerbose want: %v, got: %v", tt.wantVerbose, got)

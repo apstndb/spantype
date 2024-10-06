@@ -44,6 +44,37 @@ type FormatOption struct {
 	Array  ArrayMode
 }
 
+var (
+	FormatTypeOptionSimple = FormatOption{
+		Struct: StructModeBase,
+		Proto:  ProtoModeLeaf,
+		Enum:   EnumModeLeaf,
+		Array:  ArrayModeRecursive,
+	}
+	FormatTypeOptionSimplest = FormatOption{
+		Struct: StructModeBase,
+		Proto:  ProtoModeBase,
+		Enum:   EnumModeBase,
+		Array:  ArrayModeBase,
+	}
+	FormatOptionNormal = FormatOption{
+		Struct: StructModeRecursive,
+		Proto:  ProtoModeLeaf,
+		Enum:   EnumModeLeaf,
+		Array:  ArrayModeRecursive,
+	}
+	FormatTypeOptionVerbose = FormatOption{
+		Struct: StructModeRecursiveWithName,
+		Proto:  ProtoModeFull,
+		Enum:   EnumModeFull,
+		Array:  ArrayModeRecursive,
+	}
+)
+
+type FormatRowOption struct {
+	TypeOption FormatOption
+}
+
 func lastCut(s, sep string) (before string, after string, found bool) {
 	if i := strings.LastIndex(s, sep); i >= 0 {
 		return s[:i], s[i+len(sep):], true
@@ -85,15 +116,7 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		if opts.Struct == StructModeBase {
 			break
 		}
-		var structTypeStrs []string
-		for _, v := range typ.GetStructType().GetFields() {
-			if opts.Struct == StructModeRecursiveWithName && v.GetName() != "" {
-				structTypeStrs = append(structTypeStrs, fmt.Sprintf("%v %v", v.GetName(), FormatType(v.GetType(), opts)))
-			} else {
-				structTypeStrs = append(structTypeStrs, fmt.Sprintf("%v", FormatType(v.GetType(), opts)))
-			}
-		}
-		return fmt.Sprintf("STRUCT<%v>", strings.Join(structTypeStrs, ", "))
+		return fmt.Sprintf("STRUCT<%v>", FormatStructFields(typ.GetStructType().GetFields(), opts))
 	}
 
 	if name, ok := sppb.TypeCode_name[int32(code)]; ok {
@@ -103,38 +126,31 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 	}
 }
 
+func FormatStructFields(fields []*sppb.StructType_Field, opts FormatOption) string {
+	var fieldsStr []string
+	for _, field := range fields {
+		typeStr := FormatType(field.GetType(), opts)
+		if opts.Struct == StructModeRecursiveWithName && field.GetName() != "" {
+			fieldsStr = append(fieldsStr, fmt.Sprintf("%v %v", field.GetName(), typeStr))
+		} else {
+			fieldsStr = append(fieldsStr, fmt.Sprintf("%v", typeStr))
+		}
+	}
+	return strings.Join(fieldsStr, ", ")
+}
+
 func FormatTypeSimple(typ *sppb.Type) string {
-	return FormatType(typ, FormatOption{
-		Struct: StructModeBase,
-		Proto:  ProtoModeLeaf,
-		Enum:   EnumModeLeaf,
-		Array:  ArrayModeRecursive,
-	})
+	return FormatType(typ, FormatTypeOptionSimple)
 }
 
 func FormatTypeSimplest(typ *sppb.Type) string {
-	return FormatType(typ, FormatOption{
-		Struct: StructModeBase,
-		Proto:  ProtoModeBase,
-		Enum:   EnumModeBase,
-		Array:  ArrayModeBase,
-	})
+	return FormatType(typ, FormatTypeOptionSimplest)
 }
 
 func FormatTypeNormal(typ *sppb.Type) string {
-	return FormatType(typ, FormatOption{
-		Struct: StructModeRecursive,
-		Proto:  ProtoModeLeaf,
-		Enum:   EnumModeLeaf,
-		Array:  ArrayModeRecursive,
-	})
+	return FormatType(typ, FormatOptionNormal)
 }
 
 func FormatTypeVerbose(typ *sppb.Type) string {
-	return FormatType(typ, FormatOption{
-		Struct: StructModeRecursiveWithName,
-		Proto:  ProtoModeFull,
-		Enum:   EnumModeFull,
-		Array:  ArrayModeRecursive,
-	})
+	return FormatType(typ, FormatTypeOptionVerbose)
 }
