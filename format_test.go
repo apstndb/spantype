@@ -80,12 +80,12 @@ func TestFormatType(t *testing.T) {
 			wantNormal:   "DATE",
 		},
 		{
-			"STRING",
-			&sppb.Type{Code: sppb.TypeCode_STRING},
-			"STRING",
-			"STRING",
-			"STRING",
-			"STRING",
+			desc:         "STRING",
+			typ:          &sppb.Type{Code: sppb.TypeCode_STRING},
+			wantSimplest: "STRING",
+			wantSimple:   "STRING",
+			wantVerbose:  "STRING",
+			wantNormal:   "STRING",
 		},
 		{
 			desc:         "BYTES",
