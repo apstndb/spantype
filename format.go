@@ -48,6 +48,8 @@ const (
 	UnknownModeTypeCode
 	// UnknownModeVerbose formats unknown type code as `UNKNOWN(int32(code))` as e.g. `UNKNOWN(-1)`
 	UnknownModeVerbose
+	// UnknownModePanic panics when type code is unknown.
+	UnknownModePanic
 )
 
 // FormatOption is a option for FormatType, and FormatStructFields.
@@ -152,6 +154,8 @@ func FormatTypeCode(code sppb.TypeCode, mode UnknownMode) string {
 		return strconv.Itoa(int(code))
 	case UnknownModeVerbose:
 		return fmt.Sprintf("UNKNOWN(%v)", int32(code))
+	case UnknownModePanic:
+		panic(fmt.Sprintf("precondition failed: unknown TypeCode(%v)", int32(code)))
 	default:
 		return "UNKNOWN"
 	}

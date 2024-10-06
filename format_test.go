@@ -237,3 +237,35 @@ func TestFormatType(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatTypeCode(t *testing.T) {
+	tests := []struct {
+		desc        string
+		code        sppb.TypeCode
+		want        string
+		shouldPanic bool
+		mode        spantype.UnknownMode
+	}{
+		{
+			desc:        "UNKNOWN should panic",
+			code:        -1,
+			shouldPanic: true,
+			mode:        spantype.UnknownModePanic,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			defer func() {
+				if rec := recover(); rec != nil && !tt.shouldPanic {
+					t.Errorf("FormatTypeCode should not panic: %v", rec)
+				}
+			}()
+			if got := spantype.FormatTypeCode(tt.code, tt.mode); tt.want != got {
+				t.Errorf("FormatTypeCode want: %v, got: %v", tt.want, got)
+			}
+			if tt.shouldPanic {
+				t.Errorf("FormatTypeCode should panic")
+			}
+		})
+	}
+}
