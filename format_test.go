@@ -109,7 +109,7 @@ func TestFormatType(t *testing.T) {
 		},
 		// STRUCT
 		{
-			desc: "STRUCT",
+			desc: "STRUCT with name",
 			typ: &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{
 				Fields: []*sppb.StructType_Field{
 					{
@@ -149,6 +149,30 @@ func TestFormatType(t *testing.T) {
 			wantSimple:   "JSON",
 			wantVerbose:  "JSON",
 			wantNormal:   "JSON",
+		},
+		{
+			desc: "STRUCT without name",
+			typ: &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{
+				Fields: []*sppb.StructType_Field{
+					{
+						Type: &sppb.Type{
+							Code: sppb.TypeCode_ARRAY,
+							ArrayElementType: &sppb.Type{
+								Code: sppb.TypeCode_STRUCT,
+								StructType: &sppb.StructType{Fields: []*sppb.StructType_Field{
+									{
+										Type: &sppb.Type{Code: sppb.TypeCode_INT64},
+									},
+								}},
+							},
+						},
+					},
+				},
+			}},
+			wantSimplest: "STRUCT",
+			wantSimple:   "STRUCT",
+			wantVerbose:  "STRUCT<ARRAY<STRUCT<INT64>>>",
+			wantNormal:   "STRUCT<ARRAY<STRUCT<INT64>>>",
 		},
 		// PROTO
 		{
