@@ -23,13 +23,13 @@ func main() {
 func modeToFormatOption(mode string) spantype.FormatOption {
 	switch strings.ToLower(mode) {
 	case "verbose":
-		return spantype.FormatTypeOptionVerbose
+		return spantype.FormatOptionVerbose
 	case "normal":
 		return spantype.FormatOptionNormal
 	case "simplest":
-		return spantype.FormatTypeOptionSimplest
+		return spantype.FormatOptionSimplest
 	case "simple":
-		return spantype.FormatTypeOptionSimple
+		return spantype.FormatOptionSimple
 	default:
 		panic("unknown mode: " + mode)
 	}

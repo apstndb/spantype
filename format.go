@@ -9,34 +9,46 @@ import (
 type StructMode int
 
 const (
+	// StructModeBase prints `STRUCT` type as `STRUCT`
 	StructModeBase StructMode = iota
+	// StructModeRecursive prints `STRUCT` type with field types. e.g. `STRUCT<INT64, STRUCT<INT64>>`
 	StructModeRecursive
+	// StructModeRecursiveWithName prints `STRUCT` type with field types with field name. e.g. `STRUCT<n INT64, s STRUCT<n INT64>>`
 	StructModeRecursiveWithName
 )
 
 type ProtoMode int
 
 const (
+	// ProtoModeBase prints `PROTO` type as `PROTO`
 	ProtoModeBase ProtoMode = iota
+	// ProtoModeLeaf prints `PROTO` type without package name. e.g. `Proto`
 	ProtoModeLeaf
+	// ProtoModeFull prints `PROTO` type as full qualified name. e.g. `examples.Proto`
 	ProtoModeFull
 )
 
 type EnumMode int
 
 const (
+	// EnumModeBase prints `ENUM` type as `ENUM`.
 	EnumModeBase EnumMode = iota
+	// EnumModeLeaf prints `ENUM` type without package name. e.g. `Enum`
 	EnumModeLeaf
+	// EnumModeFull prints `ENUM` type as full qualified name. e.g. `examples.Enum`
 	EnumModeFull
 )
 
 type ArrayMode int
 
 const (
+	// ArrayModeBase prints `ARRAY` type as `ARRAY.`
 	ArrayModeBase ArrayMode = iota
+	// ArrayModeRecursive prints `ARRAY` type with element type. e.g. `ARRAY<INT64>`
 	ArrayModeRecursive
 )
 
+// FormatOption is a option for FormatType, and FormatStructFields.
 type FormatOption struct {
 	Struct StructMode
 	Proto  ProtoMode
@@ -45,25 +57,29 @@ type FormatOption struct {
 }
 
 var (
-	FormatTypeOptionSimple = FormatOption{
-		Struct: StructModeBase,
-		Proto:  ProtoModeLeaf,
-		Enum:   EnumModeLeaf,
-		Array:  ArrayModeRecursive,
-	}
-	FormatTypeOptionSimplest = FormatOption{
+	// FormatOptionSimplest is a FormatOption for FormatTypeSimplest.
+	FormatOptionSimplest = FormatOption{
 		Struct: StructModeBase,
 		Proto:  ProtoModeBase,
 		Enum:   EnumModeBase,
 		Array:  ArrayModeBase,
 	}
+	// FormatOptionSimple is a FormatOption for FormatTypeSimple.
+	FormatOptionSimple = FormatOption{
+		Struct: StructModeBase,
+		Proto:  ProtoModeLeaf,
+		Enum:   EnumModeLeaf,
+		Array:  ArrayModeRecursive,
+	}
+	// FormatOptionNormal is a FormatOption for FormatTypeNormal.
 	FormatOptionNormal = FormatOption{
 		Struct: StructModeRecursive,
 		Proto:  ProtoModeLeaf,
 		Enum:   EnumModeLeaf,
 		Array:  ArrayModeRecursive,
 	}
-	FormatTypeOptionVerbose = FormatOption{
+	// FormatOptionVerbose is a FormatOption for FormatTypeVerbose.
+	FormatOptionVerbose = FormatOption{
 		Struct: StructModeRecursiveWithName,
 		Proto:  ProtoModeFull,
 		Enum:   EnumModeFull,
@@ -78,6 +94,7 @@ func lastCut(s, sep string) (before string, after string, found bool) {
 	return "", s, false
 }
 
+// FormatType formats Cloud Spanner type using the given FormatOption.
 func FormatType(typ *sppb.Type, opts FormatOption) string {
 	code := typ.GetCode()
 	switch code {
@@ -120,6 +137,7 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 	}
 }
 
+// FormatStructFields formats Cloud Spanner struct fields or `metadata.rowType` using the given FormatOption.
 func FormatStructFields(fields []*sppb.StructType_Field, opts FormatOption) string {
 	var fieldsStr []string
 	for _, field := range fields {
@@ -133,18 +151,26 @@ func FormatStructFields(fields []*sppb.StructType_Field, opts FormatOption) stri
 	return strings.Join(fieldsStr, ", ")
 }
 
-func FormatTypeSimple(typ *sppb.Type) string {
-	return FormatType(typ, FormatTypeOptionSimple)
-}
-
+// FormatTypeSimplest formats Cloud Spanner type as simplest format.
+// e.g. `INT64`, `ARRAY, `PROTO`, `ENUM` `STRUCT`
 func FormatTypeSimplest(typ *sppb.Type) string {
-	return FormatType(typ, FormatTypeOptionSimplest)
+	return FormatType(typ, FormatOptionSimplest)
 }
 
+// FormatTypeSimple formats Cloud Spanner type as simple format.
+// e.g. `INT64`, `ARRAY<INT64>`, `ProtoType`, `EnumType` `STRUCT`
+func FormatTypeSimple(typ *sppb.Type) string {
+	return FormatType(typ, FormatOptionSimple)
+}
+
+// FormatTypeNormal formats Cloud Spanner type as normal format.
+// e.g. `INT64`, `ARRAY<INT64>`, `ProtoType`, `EnumType`, `STRUCT<INT64>`
 func FormatTypeNormal(typ *sppb.Type) string {
 	return FormatType(typ, FormatOptionNormal)
 }
 
+// FormatTypeVerbose formats Cloud Spanner type as verbose format.
+// e.g. `INT64`, `ARRAY<INT64>`, `examples.ProtoType`, `examples.EnumType`, `STRUCT<n INT64>`
 func FormatTypeVerbose(typ *sppb.Type) string {
-	return FormatType(typ, FormatTypeOptionVerbose)
+	return FormatType(typ, FormatOptionVerbose)
 }
