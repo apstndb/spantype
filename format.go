@@ -71,10 +71,6 @@ var (
 	}
 )
 
-type FormatRowOption struct {
-	TypeOption FormatOption
-}
-
 func lastCut(s, sep string) (before string, after string, found bool) {
 	if i := strings.LastIndex(s, sep); i >= 0 {
 		return s[:i], s[i+len(sep):], true
@@ -95,8 +91,7 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		case ProtoModeBase:
 			break
 		case ProtoModeLeaf:
-			fqn := typ.GetProtoTypeFqn()
-			_, after, _ := lastCut(fqn, ".")
+			_, after, _ := lastCut(typ.GetProtoTypeFqn(), ".")
 			return after
 		case ProtoModeFull:
 			return typ.GetProtoTypeFqn()
@@ -106,8 +101,7 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		case EnumModeBase:
 			break
 		case EnumModeLeaf:
-			fqn := typ.GetProtoTypeFqn()
-			_, after, _ := lastCut(fqn, ".")
+			_, after, _ := lastCut(typ.GetProtoTypeFqn(), ".")
 			return after
 		case EnumModeFull:
 			return typ.GetProtoTypeFqn()
