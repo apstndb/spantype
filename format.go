@@ -17,26 +17,15 @@ const (
 	StructModeRecursiveWithName
 )
 
-type ProtoMode int
+type ProtoEnumMode int
 
 const (
-	// ProtoModeBase prints `PROTO` type as `PROTO`
-	ProtoModeBase ProtoMode = iota
-	// ProtoModeLeaf prints `PROTO` type without package name. e.g. `ProtoType`
-	ProtoModeLeaf
-	// ProtoModeFull prints `PROTO` type as full qualified name. e.g. `examples.ProtoType`
-	ProtoModeFull
-)
-
-type EnumMode int
-
-const (
-	// EnumModeBase prints `ENUM` type as `ENUM`.
-	EnumModeBase EnumMode = iota
-	// EnumModeLeaf prints `ENUM` type without package name. e.g. `EnumType`
-	EnumModeLeaf
-	// EnumModeFull prints `ENUM` type as full qualified name. e.g. `examples.EnumType`
-	EnumModeFull
+	// ProtoEnumModeBase formats `PROTO` and `ENUM` type as `PROTO` and `ENUM`
+	ProtoEnumModeBase ProtoEnumMode = iota
+	// ProtoEnumModeLeaf formats `PROTO` and `ENUM` type without package name. e.g. `ProtoType`, `EnumType`
+	ProtoEnumModeLeaf
+	// ProtoEnumModeFull formats `PROTO` and `ENUM` type as full qualified name. e.g. `examples.ProtoType`, `examples.EnumType`
+	ProtoEnumModeFull
 )
 
 type ArrayMode int
@@ -51,8 +40,8 @@ const (
 // FormatOption is a option for FormatType, and FormatStructFields.
 type FormatOption struct {
 	Struct StructMode
-	Proto  ProtoMode
-	Enum   EnumMode
+	Proto  ProtoEnumMode
+	Enum   ProtoEnumMode
 	Array  ArrayMode
 }
 
@@ -60,29 +49,29 @@ var (
 	// FormatOptionSimplest is a FormatOption for FormatTypeSimplest.
 	FormatOptionSimplest = FormatOption{
 		Struct: StructModeBase,
-		Proto:  ProtoModeBase,
-		Enum:   EnumModeBase,
+		Proto:  ProtoEnumModeBase,
+		Enum:   ProtoEnumModeBase,
 		Array:  ArrayModeBase,
 	}
 	// FormatOptionSimple is a FormatOption for FormatTypeSimple.
 	FormatOptionSimple = FormatOption{
 		Struct: StructModeBase,
-		Proto:  ProtoModeLeaf,
-		Enum:   EnumModeLeaf,
+		Proto:  ProtoEnumModeLeaf,
+		Enum:   ProtoEnumModeLeaf,
 		Array:  ArrayModeRecursive,
 	}
 	// FormatOptionNormal is a FormatOption for FormatTypeNormal.
 	FormatOptionNormal = FormatOption{
 		Struct: StructModeRecursive,
-		Proto:  ProtoModeLeaf,
-		Enum:   EnumModeLeaf,
+		Proto:  ProtoEnumModeLeaf,
+		Enum:   ProtoEnumModeLeaf,
 		Array:  ArrayModeRecursive,
 	}
 	// FormatOptionVerbose is a FormatOption for FormatTypeVerbose.
 	FormatOptionVerbose = FormatOption{
 		Struct: StructModeRecursiveWithName,
-		Proto:  ProtoModeFull,
-		Enum:   EnumModeFull,
+		Proto:  ProtoEnumModeFull,
+		Enum:   ProtoEnumModeFull,
 		Array:  ArrayModeRecursive,
 	}
 )
@@ -105,22 +94,22 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		return fmt.Sprintf("ARRAY<%v>", FormatType(typ.GetArrayElementType(), opts))
 	case sppb.TypeCode_PROTO:
 		switch opts.Proto {
-		case ProtoModeBase:
+		case ProtoEnumModeBase:
 			break
-		case ProtoModeLeaf:
+		case ProtoEnumModeLeaf:
 			_, after, _ := lastCut(typ.GetProtoTypeFqn(), ".")
 			return after
-		case ProtoModeFull:
+		case ProtoEnumModeFull:
 			return typ.GetProtoTypeFqn()
 		}
 	case sppb.TypeCode_ENUM:
 		switch opts.Enum {
-		case EnumModeBase:
+		case ProtoEnumModeBase:
 			break
-		case EnumModeLeaf:
+		case ProtoEnumModeLeaf:
 			_, after, _ := lastCut(typ.GetProtoTypeFqn(), ".")
 			return after
-		case EnumModeFull:
+		case ProtoEnumModeFull:
 			return typ.GetProtoTypeFqn()
 		}
 	case sppb.TypeCode_STRUCT:
