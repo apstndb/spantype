@@ -2,6 +2,7 @@ package spantype
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
@@ -10,7 +11,7 @@ import (
 type StructMode int
 
 const (
-	// StructModeBase formats `STRUCT` type as `STRUCT`
+	// StructModeBase formats `STRUCT` type as `STRUCT`.
 	StructModeBase StructMode = iota
 	// StructModeRecursive formats `STRUCT` type with field types. e.g. `STRUCT<INT64, STRUCT<INT64>>`
 	StructModeRecursive
@@ -21,7 +22,7 @@ const (
 type ProtoEnumMode int
 
 const (
-	// ProtoEnumModeBase formats `PROTO` and `ENUM` type as `PROTO` and `ENUM`
+	// ProtoEnumModeBase formats `PROTO` and `ENUM` type as `PROTO` and `ENUM`.
 	ProtoEnumModeBase ProtoEnumMode = iota
 	// ProtoEnumModeLeaf formats `PROTO` and `ENUM` type without package name. e.g. `ProtoType`, `EnumType`
 	ProtoEnumModeLeaf
@@ -32,48 +33,64 @@ const (
 type ArrayMode int
 
 const (
-	// ArrayModeBase formats `ARRAY` type as `ARRAY.`
+	// ArrayModeBase formats `ARRAY` type as `ARRAY`
 	ArrayModeBase ArrayMode = iota
 	// ArrayModeRecursive formats `ARRAY` type with element type. e.g. `ARRAY<INT64>`
 	ArrayModeRecursive
 )
 
+type UnknownMode int
+
+const (
+	// UnknownModeUnknown formats unknown type code as `UNKNOWN`
+	UnknownModeUnknown UnknownMode = iota
+	// UnknownModeTypeCode formats unknown type code as e.g. `-1`
+	UnknownModeTypeCode
+	// UnknownModeVerbose formats unknown type code as `UNKNOWN(int32(code))` as e.g. `UNKNOWN(-1)`
+	UnknownModeVerbose
+)
+
 // FormatOption is a option for FormatType, and FormatStructFields.
 type FormatOption struct {
-	Struct StructMode
-	Proto  ProtoEnumMode
-	Enum   ProtoEnumMode
-	Array  ArrayMode
+	Struct  StructMode
+	Proto   ProtoEnumMode
+	Enum    ProtoEnumMode
+	Array   ArrayMode
+	Unknown UnknownMode
 }
 
 var (
 	// FormatOptionSimplest is a FormatOption for FormatTypeSimplest.
 	FormatOptionSimplest = FormatOption{
-		Struct: StructModeBase,
-		Proto:  ProtoEnumModeBase,
-		Enum:   ProtoEnumModeBase,
-		Array:  ArrayModeBase,
+		Struct:  StructModeBase,
+		Proto:   ProtoEnumModeBase,
+		Enum:    ProtoEnumModeBase,
+		Array:   ArrayModeBase,
+		Unknown: UnknownModeTypeCode,
 	}
 	// FormatOptionSimple is a FormatOption for FormatTypeSimple.
 	FormatOptionSimple = FormatOption{
-		Struct: StructModeBase,
-		Proto:  ProtoEnumModeLeaf,
-		Enum:   ProtoEnumModeLeaf,
-		Array:  ArrayModeRecursive,
+		Struct:  StructModeBase,
+		Proto:   ProtoEnumModeLeaf,
+		Enum:    ProtoEnumModeLeaf,
+		Array:   ArrayModeRecursive,
+		Unknown: UnknownModeUnknown,
 	}
 	// FormatOptionNormal is a FormatOption for FormatTypeNormal.
 	FormatOptionNormal = FormatOption{
-		Struct: StructModeRecursive,
-		Proto:  ProtoEnumModeLeaf,
-		Enum:   ProtoEnumModeLeaf,
-		Array:  ArrayModeRecursive,
+		Struct:  StructModeRecursive,
+		Proto:   ProtoEnumModeLeaf,
+		Enum:    ProtoEnumModeLeaf,
+		Array:   ArrayModeRecursive,
+		Unknown: UnknownModeVerbose,
 	}
 	// FormatOptionVerbose is a FormatOption for FormatTypeVerbose.
 	FormatOptionVerbose = FormatOption{
-		Struct: StructModeRecursiveWithName,
-		Proto:  ProtoEnumModeFull,
-		Enum:   ProtoEnumModeFull,
-		Array:  ArrayModeRecursive,
+		Struct:  StructModeRecursiveWithName,
+		Proto:   ProtoEnumModeFull,
+		Enum:    ProtoEnumModeFull,
+		Array:   ArrayModeRecursive,
+		Unknown: UnknownModeVerbose,
 	}
 )
 
@@ -104,7 +121,7 @@ func FormatType(typ *sppb.Type, opts FormatOption) string {
 		return fmt.Sprintf("STRUCT<%v>", FormatStructFields(typ.GetStructType().GetFields(), opts))
 	}
 
-	return FormatTypeCode(code)
+	return FormatTypeCode(code, opts.Unknown)
 }
 
 // FormatProtoEnum formats `PROTO` or `ENUM` type using ProtoEnumMode.
@@ -126,11 +143,17 @@ func FormatProtoEnum(typ *sppb.Type, mode ProtoEnumMode) string {
 }
 
 // FormatTypeCode formats sppb.TypeCode, but it formats unknown type code as `UNKNOWN(int32(code))`. e.g. `UNKNOWN(-1)`
-func FormatTypeCode(code sppb.TypeCode) string {
+func FormatTypeCode(code sppb.TypeCode, mode UnknownMode) string {
 	if name, ok := sppb.TypeCode_name[int32(code)]; ok {
 		return name
-	} else {
+	}
+	switch mode {
+	case UnknownModeTypeCode:
+		return strconv.Itoa(int(code))
+	case UnknownModeVerbose:
 		return fmt.Sprintf("UNKNOWN(%v)", int32(code))
+	default:
+		return "UNKNOWN"
 	}
 }
 
