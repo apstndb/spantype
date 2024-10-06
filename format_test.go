@@ -176,6 +176,17 @@ func TestFormatType(t *testing.T) {
 		},
 		// PROTO
 		{
+			desc: "PROTO without package",
+			typ: &sppb.Type{
+				Code:         sppb.TypeCode_PROTO,
+				ProtoTypeFqn: "Proto",
+			},
+			wantSimplest: "PROTO",
+			wantSimple:   "Proto",
+			wantVerbose:  "Proto",
+			wantNormal:   "Proto",
+		},
+		{
 			desc: "PROTO",
 			typ: &sppb.Type{
 				Code:         sppb.TypeCode_PROTO,
@@ -196,6 +207,17 @@ func TestFormatType(t *testing.T) {
 			wantSimplest: "ENUM",
 			wantSimple:   "Enum",
 			wantVerbose:  "examples.Enum",
+			wantNormal:   "Enum",
+		},
+		{
+			desc: "ENUM without package",
+			typ: &sppb.Type{
+				Code:         sppb.TypeCode_ENUM,
+				ProtoTypeFqn: "Enum",
+			},
+			wantSimplest: "ENUM",
+			wantSimple:   "Enum",
+			wantVerbose:  "Enum",
 			wantNormal:   "Enum",
 		},
 	} {

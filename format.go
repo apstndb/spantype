@@ -79,7 +79,7 @@ func lastCut(s, sep string) (before string, after string, found bool) {
 	if i := strings.LastIndex(s, sep); i >= 0 {
 		return s[:i], s[i+len(sep):], true
 	}
-	return s, "", false
+	return "", s, false
 }
 
 func FormatType(typ *sppb.Type, opts FormatOption) string {
