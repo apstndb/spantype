@@ -121,7 +121,7 @@ func FormatProtoEnum(typ *sppb.Type, mode ProtoEnumMode) string {
 	case ProtoEnumModeFull:
 		return typ.GetProtoTypeFqn()
 	default:
-		return FormatTypeCode(typ.GetCode())
+		return typ.GetCode().String()
 	}
 }
 
