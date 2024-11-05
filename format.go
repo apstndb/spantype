@@ -152,7 +152,7 @@ func FormatProtoEnum(typ *sppb.Type, mode ProtoEnumMode) string {
 	case ProtoEnumModeFull:
 		return typ.GetProtoTypeFqn()
 	case ProtoEnumModeFullWithKind:
-		return fmt.Sprintf("%v<%v>", sppb.TypeCode_name[int32(typ.GetCode())], typ.GetProtoTypeFqn())
+		return fmt.Sprintf("%v<%v>", typ.GetCode().String(), typ.GetProtoTypeFqn())
 	default:
 		return typ.GetCode().String()
 	}
