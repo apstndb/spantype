@@ -22,6 +22,8 @@ func main() {
 
 func modeToFormatOption(mode string) spantype.FormatOption {
 	switch strings.ToLower(mode) {
+	case "more":
+		return spantype.FormatOptionMoreVerbose
 	case "verbose":
 		return spantype.FormatOptionVerbose
 	case "normal":

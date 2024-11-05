@@ -28,6 +28,10 @@ const (
 	ProtoEnumModeLeaf
 	// ProtoEnumModeFull formats `PROTO` and `ENUM` type as full qualified name. e.g. `examples.ProtoType`, `examples.EnumType`
 	ProtoEnumModeFull
+	// ProtoEnumModeFullWithKind formats `PROTO` and `ENUM` type as full qualified name with kind.
+	// e.g. `PROTO<examples.ProtoType>`, `ENUM<examples.EnumType>`.
+	// Note: It should be same format with `INFORMATION_SCHEMA.COLUMNS.SPANNER_TYPE`.
+	ProtoEnumModeFullWithKind
 )
 
 type ArrayMode int
@@ -94,6 +98,14 @@ var (
 		Array:   ArrayModeRecursive,
 		Unknown: UnknownModeVerbose,
 	}
+	// FormatOptionMoreVerbose is a FormatOption for FormatTypeMoreVerbose.
+	FormatOptionMoreVerbose = FormatOption{
+		Struct:  StructModeRecursiveWithName,
+		Proto:   ProtoEnumModeFullWithKind,
+		Enum:    ProtoEnumModeFullWithKind,
+		Array:   ArrayModeRecursive,
+		Unknown: UnknownModeVerbose,
+	}
 )
 
 func lastCut(s, sep string) (before string, after string, found bool) {
@@ -139,6 +151,8 @@ func FormatProtoEnum(typ *sppb.Type, mode ProtoEnumMode) string {
 		return after
 	case ProtoEnumModeFull:
 		return typ.GetProtoTypeFqn()
+	case ProtoEnumModeFullWithKind:
+		return fmt.Sprintf("%v<%v>", sppb.TypeCode_name[int32(typ.GetCode())], typ.GetProtoTypeFqn())
 	default:
 		return typ.GetCode().String()
 	}
@@ -197,4 +211,10 @@ func FormatTypeNormal(typ *sppb.Type) string {
 // e.g. `INT64`, `ARRAY<INT64>`, `examples.ProtoType`, `examples.EnumType`, `STRUCT<n INT64>`
 func FormatTypeVerbose(typ *sppb.Type) string {
 	return FormatType(typ, FormatOptionVerbose)
+}
+
+// FormatTypeMoreVerbose formats Cloud Spanner type as more verbose format.
+// e.g. `INT64`, `ARRAY<INT64>`, `PROTO<examples.ProtoType>`, `ENUM<examples.EnumType>`, `STRUCT<n INT64>`
+func FormatTypeMoreVerbose(typ *sppb.Type) string {
+	return FormatType(typ, FormatOptionMoreVerbose)
 }
