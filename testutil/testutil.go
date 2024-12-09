@@ -31,7 +31,16 @@ func NameCodeToStructType(name string, code sppb.TypeCode) *sppb.Type {
 }
 
 func NameTypeToStructType(name string, typ *sppb.Type) *sppb.Type {
-	return &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{Fields: []*sppb.StructType_Field{
-		{Name: name, Type: typ},
-	}}}
+	return &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{
+		Fields: []*sppb.StructType_Field{
+			{Name: name, Type: typ},
+		}}}
+}
+
+func NameCodeToStructTypeField(name string, code sppb.TypeCode) *sppb.StructType_Field {
+	return NameTypeToStructTypeField(name, CodeToSimpleType(code))
+}
+
+func NameTypeToStructTypeField(name string, typ *sppb.Type) *sppb.StructType_Field {
+	return &sppb.StructType_Field{Name: name, Type: typ}
 }
