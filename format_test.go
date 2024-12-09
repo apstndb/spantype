@@ -1,8 +1,8 @@
-package spantype_test
+package spantype
 
 import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	"github.com/apstndb/spantype"
+	. "github.com/apstndb/spantype/testutil"
 	"testing"
 )
 
@@ -18,7 +18,7 @@ func TestFormatType(t *testing.T) {
 	}{
 		{
 			desc:            "UNKNOWN",
-			typ:             &sppb.Type{Code: -1},
+			typ:             CodeToSimpleType(-1),
 			wantSimplest:    "-1",
 			wantSimple:      "UNKNOWN",
 			wantNormal:      "UNKNOWN(-1)",
@@ -27,7 +27,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "TYPE_CODE_UNSPECIFIED",
-			typ:             &sppb.Type{Code: sppb.TypeCode_TYPE_CODE_UNSPECIFIED},
+			typ:             CodeToSimpleType(sppb.TypeCode_TYPE_CODE_UNSPECIFIED),
 			wantSimplest:    "TYPE_CODE_UNSPECIFIED",
 			wantSimple:      "TYPE_CODE_UNSPECIFIED",
 			wantNormal:      "TYPE_CODE_UNSPECIFIED",
@@ -36,7 +36,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "BOOL",
-			typ:             &sppb.Type{Code: sppb.TypeCode_BOOL},
+			typ:             CodeToSimpleType(sppb.TypeCode_BOOL),
 			wantSimplest:    "BOOL",
 			wantSimple:      "BOOL",
 			wantNormal:      "BOOL",
@@ -45,7 +45,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "INT64",
-			typ:             &sppb.Type{Code: sppb.TypeCode_INT64},
+			typ:             CodeToSimpleType(sppb.TypeCode_INT64),
 			wantSimplest:    "INT64",
 			wantSimple:      "INT64",
 			wantNormal:      "INT64",
@@ -54,7 +54,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "FLOAT64",
-			typ:             &sppb.Type{Code: sppb.TypeCode_FLOAT64},
+			typ:             CodeToSimpleType(sppb.TypeCode_FLOAT64),
 			wantSimplest:    "FLOAT64",
 			wantSimple:      "FLOAT64",
 			wantNormal:      "FLOAT64",
@@ -63,7 +63,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "FLOAT32",
-			typ:             &sppb.Type{Code: sppb.TypeCode_FLOAT32},
+			typ:             CodeToSimpleType(sppb.TypeCode_FLOAT32),
 			wantSimplest:    "FLOAT32",
 			wantSimple:      "FLOAT32",
 			wantNormal:      "FLOAT32",
@@ -72,7 +72,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "TIMESTAMP",
-			typ:             &sppb.Type{Code: sppb.TypeCode_TIMESTAMP},
+			typ:             CodeToSimpleType(sppb.TypeCode_TIMESTAMP),
 			wantSimplest:    "TIMESTAMP",
 			wantSimple:      "TIMESTAMP",
 			wantNormal:      "TIMESTAMP",
@@ -81,7 +81,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "DATE",
-			typ:             &sppb.Type{Code: sppb.TypeCode_DATE},
+			typ:             CodeToSimpleType(sppb.TypeCode_DATE),
 			wantSimplest:    "DATE",
 			wantSimple:      "DATE",
 			wantNormal:      "DATE",
@@ -90,7 +90,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "STRING",
-			typ:             &sppb.Type{Code: sppb.TypeCode_STRING},
+			typ:             CodeToSimpleType(sppb.TypeCode_STRING),
 			wantSimplest:    "STRING",
 			wantSimple:      "STRING",
 			wantNormal:      "STRING",
@@ -99,7 +99,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "BYTES",
-			typ:             &sppb.Type{Code: sppb.TypeCode_BYTES},
+			typ:             CodeToSimpleType(sppb.TypeCode_BYTES),
 			wantSimplest:    "BYTES",
 			wantSimple:      "BYTES",
 			wantNormal:      "BYTES",
@@ -108,11 +108,8 @@ func TestFormatType(t *testing.T) {
 		},
 		// ARRAY
 		{
-			desc: "ARRAY",
-			typ: &sppb.Type{
-				Code:             sppb.TypeCode_ARRAY,
-				ArrayElementType: &sppb.Type{Code: sppb.TypeCode_INT64},
-			},
+			desc:            "ARRAY",
+			typ:             ElemCodeToArrayType(sppb.TypeCode_INT64),
 			wantSimplest:    "ARRAY",
 			wantSimple:      "ARRAY<INT64>",
 			wantNormal:      "ARRAY<INT64>",
@@ -121,7 +118,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "NUMERIC",
-			typ:             &sppb.Type{Code: sppb.TypeCode_NUMERIC},
+			typ:             CodeToSimpleType(sppb.TypeCode_NUMERIC),
 			wantSimplest:    "NUMERIC",
 			wantSimple:      "NUMERIC",
 			wantNormal:      "NUMERIC",
@@ -130,7 +127,7 @@ func TestFormatType(t *testing.T) {
 		},
 		{
 			desc:            "JSON",
-			typ:             &sppb.Type{Code: sppb.TypeCode_JSON},
+			typ:             CodeToSimpleType(sppb.TypeCode_JSON),
 			wantSimplest:    "JSON",
 			wantSimple:      "JSON",
 			wantNormal:      "JSON",
@@ -139,26 +136,8 @@ func TestFormatType(t *testing.T) {
 		},
 		// STRUCT
 		{
-			desc: "STRUCT with name",
-			typ: &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{
-				Fields: []*sppb.StructType_Field{
-					{
-						Name: "arr",
-						Type: &sppb.Type{
-							Code: sppb.TypeCode_ARRAY,
-							ArrayElementType: &sppb.Type{
-								Code: sppb.TypeCode_STRUCT,
-								StructType: &sppb.StructType{Fields: []*sppb.StructType_Field{
-									{
-										Name: "n",
-										Type: &sppb.Type{Code: sppb.TypeCode_INT64},
-									},
-								}},
-							},
-						},
-					},
-				},
-			}},
+			desc:            "STRUCT with name",
+			typ:             NameTypeToStructType("arr", ElemTypeToArrayType(NameCodeToStructType("n", sppb.TypeCode_INT64))),
 			wantSimplest:    "STRUCT",
 			wantSimple:      "STRUCT",
 			wantNormal:      "STRUCT<ARRAY<STRUCT<INT64>>>",
@@ -166,24 +145,8 @@ func TestFormatType(t *testing.T) {
 			wantMoreVerbose: "STRUCT<arr ARRAY<STRUCT<n INT64>>>",
 		},
 		{
-			desc: "STRUCT without name",
-			typ: &sppb.Type{Code: sppb.TypeCode_STRUCT, StructType: &sppb.StructType{
-				Fields: []*sppb.StructType_Field{
-					{
-						Type: &sppb.Type{
-							Code: sppb.TypeCode_ARRAY,
-							ArrayElementType: &sppb.Type{
-								Code: sppb.TypeCode_STRUCT,
-								StructType: &sppb.StructType{Fields: []*sppb.StructType_Field{
-									{
-										Type: &sppb.Type{Code: sppb.TypeCode_INT64},
-									},
-								}},
-							},
-						},
-					},
-				},
-			}},
+			desc:            "STRUCT without name",
+			typ:             NameTypeToStructType("", ElemTypeToArrayType(NameCodeToStructType("", sppb.TypeCode_INT64))),
 			wantSimplest:    "STRUCT",
 			wantSimple:      "STRUCT",
 			wantNormal:      "STRUCT<ARRAY<STRUCT<INT64>>>",
@@ -192,11 +155,8 @@ func TestFormatType(t *testing.T) {
 		},
 		// PROTO
 		{
-			desc: "PROTO without package",
-			typ: &sppb.Type{
-				Code:         sppb.TypeCode_PROTO,
-				ProtoTypeFqn: "ProtoType",
-			},
+			desc:            "PROTO without package",
+			typ:             FQNToProtoType("ProtoType"),
 			wantSimplest:    "PROTO",
 			wantSimple:      "ProtoType",
 			wantNormal:      "ProtoType",
@@ -204,11 +164,8 @@ func TestFormatType(t *testing.T) {
 			wantMoreVerbose: "PROTO<ProtoType>",
 		},
 		{
-			desc: "PROTO",
-			typ: &sppb.Type{
-				Code:         sppb.TypeCode_PROTO,
-				ProtoTypeFqn: "examples.ProtoType",
-			},
+			desc:            "PROTO",
+			typ:             FQNToProtoType("examples.ProtoType"),
 			wantSimplest:    "PROTO",
 			wantSimple:      "ProtoType",
 			wantNormal:      "ProtoType",
@@ -217,11 +174,8 @@ func TestFormatType(t *testing.T) {
 		},
 		// ENUM
 		{
-			desc: "ENUM",
-			typ: &sppb.Type{
-				Code:         sppb.TypeCode_ENUM,
-				ProtoTypeFqn: "examples.EnumType",
-			},
+			desc:            "ENUM",
+			typ:             FQNToEnumType("examples.EnumType"),
 			wantSimplest:    "ENUM",
 			wantSimple:      "EnumType",
 			wantNormal:      "EnumType",
@@ -229,11 +183,8 @@ func TestFormatType(t *testing.T) {
 			wantMoreVerbose: "ENUM<examples.EnumType>",
 		},
 		{
-			desc: "ENUM without package",
-			typ: &sppb.Type{
-				Code:         sppb.TypeCode_ENUM,
-				ProtoTypeFqn: "EnumType",
-			},
+			desc:            "ENUM without package",
+			typ:             FQNToEnumType("EnumType"),
 			wantSimplest:    "ENUM",
 			wantSimple:      "EnumType",
 			wantNormal:      "EnumType",
@@ -242,19 +193,19 @@ func TestFormatType(t *testing.T) {
 		},
 	} {
 		t.Run(tt.desc, func(t *testing.T) {
-			if got := spantype.FormatTypeSimple(tt.typ); tt.wantSimple != got {
+			if got := FormatTypeSimple(tt.typ); tt.wantSimple != got {
 				t.Errorf("FormatTypeSimple want: %v, got: %v", tt.wantSimple, got)
 			}
-			if got := spantype.FormatTypeSimplest(tt.typ); tt.wantSimplest != got {
+			if got := FormatTypeSimplest(tt.typ); tt.wantSimplest != got {
 				t.Errorf("FormatTypeSimplest want: %v, got: %v", tt.wantSimplest, got)
 			}
-			if got := spantype.FormatTypeNormal(tt.typ); tt.wantNormal != got {
+			if got := FormatTypeNormal(tt.typ); tt.wantNormal != got {
 				t.Errorf("FormatTypeNormal want: %v, got: %v", tt.wantNormal, got)
 			}
-			if got := spantype.FormatTypeVerbose(tt.typ); tt.wantVerbose != got {
+			if got := FormatTypeVerbose(tt.typ); tt.wantVerbose != got {
 				t.Errorf("FormatTypeVerbose want: %v, got: %v", tt.wantVerbose, got)
 			}
-			if got := spantype.FormatTypeMoreVerbose(tt.typ); tt.wantMoreVerbose != got {
+			if got := FormatTypeMoreVerbose(tt.typ); tt.wantMoreVerbose != got {
 				t.Errorf("FormatTypeMoreVerbose want: %v, got: %v", tt.wantMoreVerbose, got)
 			}
 		})
@@ -267,13 +218,13 @@ func TestFormatTypeCode(t *testing.T) {
 		code        sppb.TypeCode
 		want        string
 		shouldPanic bool
-		mode        spantype.UnknownMode
+		mode        UnknownMode
 	}{
 		{
 			desc:        "UNKNOWN should panic",
 			code:        -1,
 			shouldPanic: true,
-			mode:        spantype.UnknownModePanic,
+			mode:        UnknownModePanic,
 		},
 	}
 	for _, tt := range tests {
@@ -283,7 +234,7 @@ func TestFormatTypeCode(t *testing.T) {
 					t.Errorf("FormatTypeCode should not panic: %v", rec)
 				}
 			}()
-			if got := spantype.FormatTypeCode(tt.code, tt.mode); tt.want != got {
+			if got := FormatTypeCode(tt.code, tt.mode); tt.want != got {
 				t.Errorf("FormatTypeCode want: %v, got: %v", tt.want, got)
 			}
 			if tt.shouldPanic {
