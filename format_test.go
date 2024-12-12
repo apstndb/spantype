@@ -2,7 +2,7 @@ package spantype
 
 import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	. "github.com/apstndb/spantype/testutil"
+	. "github.com/apstndb/spantype/ctorutil"
 	"testing"
 )
 
