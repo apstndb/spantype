@@ -1,4 +1,4 @@
-package ctorutil
+package typector
 
 import sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 
