@@ -48,6 +48,14 @@ func NameTypeToStructTypeField(name string, typ *sppb.Type) *sppb.StructType_Fie
 	return &sppb.StructType_Field{Name: name, Type: typ}
 }
 
+func CodeToUnnamedStructTypeField(code sppb.TypeCode) *sppb.StructType_Field {
+	return NameTypeToStructTypeField("", CodeToSimpleType(code))
+}
+
+func TypeToUnnamedStructTypeField(typ *sppb.Type) *sppb.StructType_Field {
+	return &sppb.StructType_Field{Type: typ}
+}
+
 func NameTypeSlicesToStructType(names []string, types []*sppb.Type) (*sppb.Type, error) {
 	fields, err := NameTypeSlicesToStructTypeFields(names, types)
 	if err != nil {
