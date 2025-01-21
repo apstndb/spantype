@@ -1,9 +1,11 @@
 package spantype
 
 import (
-	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	. "github.com/apstndb/spantype/typector"
 	"testing"
+
+	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
+
+	. "github.com/apstndb/spantype/typector"
 )
 
 func TestFormatType(t *testing.T) {
@@ -133,6 +135,15 @@ func TestFormatType(t *testing.T) {
 			wantNormal:      "JSON",
 			wantVerbose:     "JSON",
 			wantMoreVerbose: "JSON",
+		},
+		{
+			desc:            "INTERVAL",
+			typ:             CodeToSimpleType(sppb.TypeCode_INTERVAL),
+			wantSimplest:    "INTERVAL",
+			wantSimple:      "INTERVAL",
+			wantNormal:      "INTERVAL",
+			wantVerbose:     "INTERVAL",
+			wantMoreVerbose: "INTERVAL",
 		},
 		// STRUCT
 		{
