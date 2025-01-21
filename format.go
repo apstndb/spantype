@@ -28,6 +28,9 @@ const (
 	ProtoEnumModeLeaf
 	// ProtoEnumModeFull formats `PROTO` and `ENUM` type as full qualified name. e.g. `examples.ProtoType`, `examples.EnumType`
 	ProtoEnumModeFull
+	// ProtoEnumModeLeafWithKind formats `PROTO` and `ENUM` type without package name with kind.
+	// e.g. `PROTO<ProtoType>`, `ENUM<EnumType>`
+	ProtoEnumModeLeafWithKind
 	// ProtoEnumModeFullWithKind formats `PROTO` and `ENUM` type as full qualified name with kind.
 	// e.g. `PROTO<examples.ProtoType>`, `ENUM<examples.EnumType>`.
 	// Note: It should be same format with `INFORMATION_SCHEMA.COLUMNS.SPANNER_TYPE`.
@@ -151,6 +154,9 @@ func FormatProtoEnum(typ *sppb.Type, mode ProtoEnumMode) string {
 		return after
 	case ProtoEnumModeFull:
 		return typ.GetProtoTypeFqn()
+	case ProtoEnumModeLeafWithKind:
+		_, after, _ := lastCut(typ.GetProtoTypeFqn(), ".")
+		return fmt.Sprintf("%v<%v>", typ.GetCode().String(), after)
 	case ProtoEnumModeFullWithKind:
 		return fmt.Sprintf("%v<%v>", typ.GetCode().String(), typ.GetProtoTypeFqn())
 	default:

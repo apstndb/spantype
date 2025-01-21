@@ -1,6 +1,7 @@
 package spantype
 
 import (
+	"fmt"
 	"testing"
 
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
@@ -218,6 +219,50 @@ func TestFormatType(t *testing.T) {
 			}
 			if got := FormatTypeMoreVerbose(tt.typ); tt.wantMoreVerbose != got {
 				t.Errorf("FormatTypeMoreVerbose want: %v, got: %v", tt.wantMoreVerbose, got)
+			}
+		})
+	}
+}
+
+func TestFormatProtoEnum(t *testing.T) {
+	tests := []struct {
+		desc string
+		typ  *sppb.Type
+		want map[ProtoEnumMode]string
+	}{
+		{
+			desc: "ENUM",
+			typ:  FQNToEnumType("examples.EnumType"),
+			want: map[ProtoEnumMode]string{
+				ProtoEnumModeBase:         "ENUM",
+				ProtoEnumModeLeaf:         "EnumType",
+				ProtoEnumModeFull:         "examples.EnumType",
+				ProtoEnumModeLeafWithKind: "ENUM<EnumType>",
+				ProtoEnumModeFullWithKind: "ENUM<examples.EnumType>",
+			},
+		},
+		{
+			desc: "PROTO",
+			typ:  FQNToProtoType("examples.ProtoType"),
+			want: map[ProtoEnumMode]string{
+				ProtoEnumModeBase:         "PROTO",
+				ProtoEnumModeLeaf:         "ProtoType",
+				ProtoEnumModeFull:         "examples.ProtoType",
+				ProtoEnumModeLeafWithKind: "PROTO<ProtoType>",
+				ProtoEnumModeFullWithKind: "PROTO<examples.ProtoType>",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			for _, mode := range []ProtoEnumMode{ProtoEnumModeBase, ProtoEnumModeLeaf, ProtoEnumModeFull, ProtoEnumModeLeafWithKind, ProtoEnumModeFullWithKind} {
+				t.Run(fmt.Sprint(mode), func(t *testing.T) {
+					if got := FormatProtoEnum(tt.typ, mode); tt.want[mode] != got {
+						t.Errorf("FormatTypeCode want: %v, got: %v", tt.want[mode], got)
+					}
+				})
+
 			}
 		})
 	}
