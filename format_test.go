@@ -146,6 +146,15 @@ func TestFormatType(t *testing.T) {
 			wantVerbose:     "INTERVAL",
 			wantMoreVerbose: "INTERVAL",
 		},
+		{
+			desc:            "UUID",
+			typ:             CodeToSimpleType(sppb.TypeCode_UUID),
+			wantSimplest:    "UUID",
+			wantSimple:      "UUID",
+			wantNormal:      "UUID",
+			wantVerbose:     "UUID",
+			wantMoreVerbose: "UUID",
+		},
 		// STRUCT
 		{
 			desc:            "STRUCT with name",
