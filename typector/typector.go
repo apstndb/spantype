@@ -6,22 +6,21 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 )
 
-// Pre-built type constants for all simple Spanner types.
+// Pre-built type constructors for all simple Spanner types.
 // PROTO and ENUM are excluded because they require a fully qualified name.
-var (
-	Bool      = CodeToSimpleType(sppb.TypeCode_BOOL)
-	Int64     = CodeToSimpleType(sppb.TypeCode_INT64)
-	Float32   = CodeToSimpleType(sppb.TypeCode_FLOAT32)
-	Float64   = CodeToSimpleType(sppb.TypeCode_FLOAT64)
-	Timestamp = CodeToSimpleType(sppb.TypeCode_TIMESTAMP)
-	Date      = CodeToSimpleType(sppb.TypeCode_DATE)
-	String    = CodeToSimpleType(sppb.TypeCode_STRING)
-	Bytes     = CodeToSimpleType(sppb.TypeCode_BYTES)
-	Numeric   = CodeToSimpleType(sppb.TypeCode_NUMERIC)
-	JSON      = CodeToSimpleType(sppb.TypeCode_JSON)
-	Interval  = CodeToSimpleType(sppb.TypeCode_INTERVAL)
-	UUID      = CodeToSimpleType(sppb.TypeCode_UUID)
-)
+
+func Bool() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_BOOL) }
+func Int64() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_INT64) }
+func Float32() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT32) }
+func Float64() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT64) }
+func Timestamp() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_TIMESTAMP) }
+func Date() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_DATE) }
+func String() *sppb.Type    { return CodeToSimpleType(sppb.TypeCode_STRING) }
+func Bytes() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_BYTES) }
+func Numeric() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_NUMERIC) }
+func JSON() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_JSON) }
+func Interval() *sppb.Type  { return CodeToSimpleType(sppb.TypeCode_INTERVAL) }
+func UUID() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_UUID) }
 
 func CodeToSimpleType(code sppb.TypeCode) *sppb.Type {
 	return &sppb.Type{Code: code}
