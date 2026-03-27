@@ -15,9 +15,9 @@ func TestFormatType(t *testing.T) {
 		typ             *sppb.Type
 		wantSimplest    string
 		wantSimple      string
+		wantNormal      string
 		wantVerbose     string
 		wantMoreVerbose string
-		wantNormal      string
 	}{
 		{
 			desc:            "UNKNOWN",
@@ -214,11 +214,11 @@ func TestFormatType(t *testing.T) {
 		},
 	} {
 		t.Run(tt.desc, func(t *testing.T) {
-			if got := FormatTypeSimple(tt.typ); tt.wantSimple != got {
-				t.Errorf("FormatTypeSimple want: %v, got: %v", tt.wantSimple, got)
-			}
 			if got := FormatTypeSimplest(tt.typ); tt.wantSimplest != got {
 				t.Errorf("FormatTypeSimplest want: %v, got: %v", tt.wantSimplest, got)
+			}
+			if got := FormatTypeSimple(tt.typ); tt.wantSimple != got {
+				t.Errorf("FormatTypeSimple want: %v, got: %v", tt.wantSimple, got)
 			}
 			if got := FormatTypeNormal(tt.typ); tt.wantNormal != got {
 				t.Errorf("FormatTypeNormal want: %v, got: %v", tt.wantNormal, got)
@@ -268,7 +268,7 @@ func TestFormatProtoEnum(t *testing.T) {
 			for _, mode := range []ProtoEnumMode{ProtoEnumModeBase, ProtoEnumModeLeaf, ProtoEnumModeFull, ProtoEnumModeLeafWithKind, ProtoEnumModeFullWithKind} {
 				t.Run(fmt.Sprint(mode), func(t *testing.T) {
 					if got := FormatProtoEnum(tt.typ, mode); tt.want[mode] != got {
-						t.Errorf("FormatTypeCode want: %v, got: %v", tt.want[mode], got)
+						t.Errorf("FormatProtoEnum want: %v, got: %v", tt.want[mode], got)
 					}
 				})
 

@@ -4,14 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/apstndb/spantype"
-	"google.golang.org/protobuf/encoding/protojson"
 	"io"
+	"log"
+	"os"
 	"strings"
 
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	"log"
-	"os"
+	"github.com/apstndb/spantype"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func modeToFormatOption(mode string) spantype.FormatOption {
 }
 
 func run(ctx context.Context) error {
-	mode := flag.String("mode", "verbose", "format mode (simplest|simple|normal|verbose)")
+	mode := flag.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
 	flag.Parse()
 
 	formatOpt := modeToFormatOption(*mode)

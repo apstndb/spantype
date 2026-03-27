@@ -189,7 +189,7 @@ func FormatStructFields(fields []*sppb.StructType_Field, opts FormatOption) stri
 		if opts.Struct == StructModeRecursiveWithName && field.GetName() != "" {
 			fieldsStr = append(fieldsStr, fmt.Sprintf("%v %v", field.GetName(), typeStr))
 		} else {
-			fieldsStr = append(fieldsStr, fmt.Sprintf("%v", typeStr))
+			fieldsStr = append(fieldsStr, typeStr)
 		}
 	}
 	return strings.Join(fieldsStr, ", ")
