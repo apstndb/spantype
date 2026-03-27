@@ -6,11 +6,9 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 )
 
-// Pre-built type constructors for all simple Spanner types.
+// Shorthand constructors for all simple Spanner types.
+// Each call returns a new *sppb.Type to prevent shared mutation across callers.
 // PROTO and ENUM are excluded because they require a fully qualified name.
-//
-// These are functions (not package-level vars) so that each call returns a fresh
-// *sppb.Type, preventing accidental shared mutation across callers and tests.
 
 func Bool() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_BOOL) }
 func Int64() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_INT64) }
