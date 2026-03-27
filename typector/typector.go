@@ -6,6 +6,23 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 )
 
+// Pre-built type constants for all simple Spanner types.
+// PROTO and ENUM are excluded because they require a fully qualified name.
+var (
+	Bool      = CodeToSimpleType(sppb.TypeCode_BOOL)
+	Int64     = CodeToSimpleType(sppb.TypeCode_INT64)
+	Float32   = CodeToSimpleType(sppb.TypeCode_FLOAT32)
+	Float64   = CodeToSimpleType(sppb.TypeCode_FLOAT64)
+	Timestamp = CodeToSimpleType(sppb.TypeCode_TIMESTAMP)
+	Date      = CodeToSimpleType(sppb.TypeCode_DATE)
+	String    = CodeToSimpleType(sppb.TypeCode_STRING)
+	Bytes     = CodeToSimpleType(sppb.TypeCode_BYTES)
+	Numeric   = CodeToSimpleType(sppb.TypeCode_NUMERIC)
+	JSON      = CodeToSimpleType(sppb.TypeCode_JSON)
+	Interval  = CodeToSimpleType(sppb.TypeCode_INTERVAL)
+	UUID      = CodeToSimpleType(sppb.TypeCode_UUID)
+)
+
 func CodeToSimpleType(code sppb.TypeCode) *sppb.Type {
 	return &sppb.Type{Code: code}
 }
