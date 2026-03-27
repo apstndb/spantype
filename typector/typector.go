@@ -6,6 +6,23 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 )
 
+// Shorthand constructors for all simple Spanner types.
+// Each call returns a new *sppb.Type to prevent shared mutation across callers.
+// PROTO and ENUM are excluded because they require a fully qualified name.
+
+func Bool() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_BOOL) }
+func Int64() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_INT64) }
+func Float32() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT32) }
+func Float64() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT64) }
+func Timestamp() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_TIMESTAMP) }
+func Date() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_DATE) }
+func String() *sppb.Type    { return CodeToSimpleType(sppb.TypeCode_STRING) }
+func Bytes() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_BYTES) }
+func Numeric() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_NUMERIC) }
+func JSON() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_JSON) }
+func Interval() *sppb.Type  { return CodeToSimpleType(sppb.TypeCode_INTERVAL) }
+func UUID() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_UUID) }
+
 func CodeToSimpleType(code sppb.TypeCode) *sppb.Type {
 	return &sppb.Type{Code: code}
 }
