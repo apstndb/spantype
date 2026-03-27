@@ -59,7 +59,7 @@ const (
 	UnknownModePanic
 )
 
-// FormatOption is a option for FormatType, and FormatStructFields.
+// FormatOption is an option for FormatType, and FormatStructFields.
 type FormatOption struct {
 	Struct  StructMode
 	Proto   ProtoEnumMode
@@ -196,13 +196,13 @@ func FormatStructFields(fields []*sppb.StructType_Field, opts FormatOption) stri
 }
 
 // FormatTypeSimplest formats Cloud Spanner type as simplest format.
-// e.g. `INT64`, `ARRAY, `PROTO`, `ENUM` `STRUCT`
+// e.g. `INT64`, `ARRAY`, `PROTO`, `ENUM`, `STRUCT`
 func FormatTypeSimplest(typ *sppb.Type) string {
 	return FormatType(typ, FormatOptionSimplest)
 }
 
 // FormatTypeSimple formats Cloud Spanner type as simple format.
-// e.g. `INT64`, `ARRAY<INT64>`, `ProtoType`, `EnumType` `STRUCT`
+// e.g. `INT64`, `ARRAY<INT64>`, `ProtoType`, `EnumType`, `STRUCT`
 func FormatTypeSimple(typ *sppb.Type) string {
 	return FormatType(typ, FormatOptionSimple)
 }
