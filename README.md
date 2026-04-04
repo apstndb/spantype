@@ -11,15 +11,15 @@
 
 ### `spantype`
 
-The root package formats Spanner types with configurable verbosity.
+The root package formats Spanner types with configurable verbosity. For a type like `STRUCT<arr ARRAY<STRUCT<n INT64>>, proto PROTO<examples.Book>>`, the helpers differ like this:
 
-| Function | Intended use |
-| --- | --- |
-| `FormatTypeSimplest` | Very compact summaries such as schema overviews |
-| `FormatTypeSimple` | Compact logs where array element types still matter |
-| `FormatTypeNormal` | Default structured output without field names |
-| `FormatTypeVerbose` | Human-facing diagnostics with struct field names |
-| `FormatTypeMoreVerbose` | Errors and debugging where `PROTO` / `ENUM` kind should stay explicit |
+| Function | Intended use | Example output |
+| --- | --- | --- |
+| `FormatTypeSimplest` | Very compact summaries such as schema overviews | `STRUCT` |
+| `FormatTypeSimple` | Compact logs where array element types still matter | `STRUCT` |
+| `FormatTypeNormal` | Default structured output without field names | `STRUCT<ARRAY<STRUCT<INT64>>, Book>` |
+| `FormatTypeVerbose` | Human-facing diagnostics with struct field names | `STRUCT<arr ARRAY<STRUCT<n INT64>>, proto examples.Book>` |
+| `FormatTypeMoreVerbose` | Errors and debugging where `PROTO` / `ENUM` kind should stay explicit | `STRUCT<arr ARRAY<STRUCT<n INT64>>, proto PROTO<examples.Book>>` |
 
 If you need custom behavior, call `FormatType` with `FormatOption`.
 
