@@ -13,29 +13,40 @@ import (
 // PROTO and ENUM are excluded because they require a fully qualified name.
 
 // Bool returns a BOOL type.
-func Bool() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_BOOL) }
+func Bool() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_BOOL) }
+
 // Int64 returns an INT64 type.
-func Int64() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_INT64) }
+func Int64() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_INT64) }
+
 // Float32 returns a FLOAT32 type.
-func Float32() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT32) }
+func Float32() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_FLOAT32) }
+
 // Float64 returns a FLOAT64 type.
-func Float64() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_FLOAT64) }
+func Float64() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_FLOAT64) }
+
 // Timestamp returns a TIMESTAMP type.
 func Timestamp() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_TIMESTAMP) }
+
 // Date returns a DATE type.
-func Date() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_DATE) }
+func Date() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_DATE) }
+
 // String returns a STRING type.
-func String() *sppb.Type    { return CodeToSimpleType(sppb.TypeCode_STRING) }
+func String() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_STRING) }
+
 // Bytes returns a BYTES type.
-func Bytes() *sppb.Type     { return CodeToSimpleType(sppb.TypeCode_BYTES) }
+func Bytes() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_BYTES) }
+
 // Numeric returns a NUMERIC type.
-func Numeric() *sppb.Type   { return CodeToSimpleType(sppb.TypeCode_NUMERIC) }
+func Numeric() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_NUMERIC) }
+
 // JSON returns a JSON type.
-func JSON() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_JSON) }
+func JSON() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_JSON) }
+
 // Interval returns an INTERVAL type.
-func Interval() *sppb.Type  { return CodeToSimpleType(sppb.TypeCode_INTERVAL) }
+func Interval() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_INTERVAL) }
+
 // UUID returns a UUID type.
-func UUID() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_UUID) }
+func UUID() *sppb.Type { return CodeToSimpleType(sppb.TypeCode_UUID) }
 
 // CodeToSimpleType returns a simple non-container type for the given code.
 func CodeToSimpleType(code sppb.TypeCode) *sppb.Type {
