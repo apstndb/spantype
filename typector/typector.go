@@ -11,6 +11,7 @@ import (
 // Shorthand constructors for all simple Spanner types.
 // Each call returns a new *sppb.Type to prevent shared mutation across callers.
 // PROTO and ENUM are excluded because they require a fully qualified name.
+
 // Bool returns a BOOL type.
 func Bool() *sppb.Type      { return CodeToSimpleType(sppb.TypeCode_BOOL) }
 // Int64 returns an INT64 type.

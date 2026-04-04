@@ -11,7 +11,7 @@ This repository is a small Go module centered on Spanner type formatting.
 
 ## Build, Test, and Development Commands
 
-Use the standard Go toolchain declared in [`go.mod`](/Users/apstndb/work/apstndb/spantype/go.mod).
+Use the standard Go toolchain declared in [`go.mod`](./go.mod).
 
 - `go test ./...`: run all package tests.
 - `go test -run TestFormatType ./...`: run a focused test while iterating.
@@ -30,7 +30,7 @@ Follow standard Go formatting with `gofmt`; use tabs and keep imports `gofmt`-so
 
 ## Testing Guidelines
 
-Tests live next to the code they cover and use Go’s `testing` package. Name tests `TestXxx` and subtests with descriptive `desc` values, matching the pattern in [`format_test.go`](/Users/apstndb/work/apstndb/spantype/format_test.go). There is no published coverage threshold, but new behavior should include regression tests for relevant type codes, mode combinations, and edge cases such as unknown or unnamed fields.
+Tests live next to the code they cover and use Go’s `testing` package. Name tests `TestXxx` and subtests with descriptive `desc` values, matching the pattern in [`format_test.go`](./format_test.go). There is no published coverage threshold, but new behavior should include regression tests for relevant type codes, mode combinations, and edge cases such as unknown or unnamed fields.
 
 ## Commit & Pull Request Guidelines
 
