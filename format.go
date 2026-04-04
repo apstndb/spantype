@@ -1,3 +1,5 @@
+// Package spantype formats Cloud Spanner google.spanner.v1.Type values with
+// multiple verbosity levels for logs, errors, and debugging output.
 package spantype
 
 import (
@@ -8,6 +10,8 @@ import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
 )
 
+// StructMode controls how STRUCT types are rendered by selecting one of
+// StructModeBase, StructModeRecursive, or StructModeRecursiveWithName.
 type StructMode int
 
 const (
@@ -19,6 +23,8 @@ const (
 	StructModeRecursiveWithName
 )
 
+// ProtoEnumMode controls how PROTO and ENUM types are rendered by selecting
+// base, leaf, full-name, or explicit-kind output.
 type ProtoEnumMode int
 
 const (
@@ -37,6 +43,8 @@ const (
 	ProtoEnumModeFullWithKind
 )
 
+// ArrayMode controls how ARRAY types are rendered by selecting either base or
+// recursive element rendering.
 type ArrayMode int
 
 const (
@@ -46,6 +54,8 @@ const (
 	ArrayModeRecursive
 )
 
+// UnknownMode controls how unknown type codes are rendered by selecting
+// UNKNOWN, the raw numeric code, a verbose form, or panic behavior.
 type UnknownMode int
 
 const (
@@ -61,10 +71,15 @@ const (
 
 // FormatOption is an option for FormatType, and FormatStructFields.
 type FormatOption struct {
+	// Struct controls STRUCT formatting.
 	Struct  StructMode
+	// Proto controls PROTO formatting.
 	Proto   ProtoEnumMode
+	// Enum controls ENUM formatting.
 	Enum    ProtoEnumMode
+	// Array controls ARRAY formatting.
 	Array   ArrayMode
+	// Unknown controls formatting for unknown type codes.
 	Unknown UnknownMode
 }
 

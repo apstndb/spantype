@@ -2,7 +2,7 @@
 $ ./spantype --help
 Usage of ./spantype:
   -mode string
-        format mode (simplest|simple|normal|verbose) (default "verbose")
+        format mode (simplest|simple|normal|verbose|more) (default "verbose")
 
 $ gcloud spanner databases execute-sql ${SPANNER_DATABASE} \
     --format="json" --query-mode=PLAN \
