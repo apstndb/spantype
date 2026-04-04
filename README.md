@@ -16,7 +16,7 @@ The root package formats Spanner types with configurable verbosity. For a type l
 | Function | Intended use | Example output |
 | --- | --- | --- |
 | `FormatTypeSimplest` | Very compact summaries such as schema overviews | `STRUCT` |
-| `FormatTypeSimple` | Compact logs where array element types still matter | `STRUCT` |
+| `FormatTypeSimple` | Compact logs; top-level `STRUCT`s are still collapsed to `STRUCT` | `STRUCT` |
 | `FormatTypeNormal` | Default structured output without field names | `STRUCT<ARRAY<STRUCT<INT64>>, Book>` |
 | `FormatTypeVerbose` | Human-facing diagnostics with struct field names | `STRUCT<arr ARRAY<STRUCT<n INT64>>, proto examples.Book>` |
 | `FormatTypeMoreVerbose` | Errors and debugging where `PROTO` / `ENUM` kind should stay explicit | `STRUCT<arr ARRAY<STRUCT<n INT64>>, proto PROTO<examples.Book>>` |
