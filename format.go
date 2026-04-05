@@ -87,6 +87,10 @@ const (
 )
 
 // FormatOption is an option for FormatType, and FormatStructFields.
+//
+// Callers building their own values should use keyed struct literals (e.g.
+// FormatOption{Struct: ..., Proto: ...}) so that new fields can be added in
+// minor releases without breaking compilation. Positional literals are fragile.
 type FormatOption struct {
 	// Struct controls STRUCT formatting.
 	Struct StructMode
