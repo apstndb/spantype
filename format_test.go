@@ -291,12 +291,12 @@ func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
 		},
 		{
 			desc: "JSON PG_JSONB",
-			typ:  PGJsonB(),
+			typ:  PGJSONB(),
 			want: "JSON(PG_JSONB)",
 		},
 		{
 			desc: "INT64 PG_OID",
-			typ:  PGOid(),
+			typ:  PGOID(),
 			want: "INT64(PG_OID)",
 		},
 		{
@@ -306,7 +306,7 @@ func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
 		},
 		{
 			desc: "STRUCT with PG annotations (normal mode omits field names)",
-			typ:  MustNameTypeSlicesToStructType([]string{"a", "b"}, []*sppb.Type{PGNumeric(), PGJsonB()}),
+			typ:  MustNameTypeSlicesToStructType([]string{"a", "b"}, []*sppb.Type{PGNumeric(), PGJSONB()}),
 			want: "STRUCT<NUMERIC(PG_NUMERIC), JSON(PG_JSONB)>",
 		},
 	} {

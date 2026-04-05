@@ -42,7 +42,7 @@ The same mode applies recursively inside `ARRAY<>` and `STRUCT<>` fields.
 - Use shorthand constructors such as `Int64()`, `String()`, and `UUID()` for common scalar types.
 - Use `ElemCodeToArrayType` / `ElemTypeToArrayType` for arrays.
 - Use `FQNToProtoType` / `FQNToEnumType` for `PROTO` and `ENUM`, which require a fully-qualified name.
-- Use `SimpleTypeWithAnnotation`, `PGNumeric`, `PGJsonB`, or `PGOid` when you need PostgreSQL [`TypeAnnotation`](https://pkg.go.dev/cloud.google.com/go/spanner/apiv1/spannerpb#Type) markers on scalars.
+- Use `SimpleTypeWithAnnotation`, `PGNumeric`, `PGJSONB`, or `PGOID` when you need PostgreSQL [`TypeAnnotation`](https://pkg.go.dev/cloud.google.com/go/spanner/apiv1/spannerpb#Type) markers on scalars.
 - Prefer `...Code...` forms when your input is a type code, and `...Type...` forms when you already have `*spannerpb.Type`.
 
 ## CLI Example

@@ -1,6 +1,6 @@
 ```shell
 $ ./spantype --help
-Usage of ./spantype:
+Usage of spantype:
   -mode string
         format mode (simplest|simple|normal|verbose|more) (default "verbose")
   -type-annotation string

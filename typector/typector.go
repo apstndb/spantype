@@ -1,7 +1,7 @@
 // Package typector provides small constructor helpers for building Cloud
 // Spanner google.spanner.v1.Type values and struct fields in tests and callers.
 // PostgreSQL-oriented types use [sppb.Type.TypeAnnotation]; see [SimpleTypeWithAnnotation],
-// [PGNumeric], [PGJsonB], and [PGOid].
+// [PGNumeric], [PGJSONB], and [PGOID].
 package typector
 
 import (
@@ -66,13 +66,13 @@ func PGNumeric() *sppb.Type {
 	return SimpleTypeWithAnnotation(sppb.TypeCode_NUMERIC, sppb.TypeAnnotationCode_PG_NUMERIC)
 }
 
-// PGJsonB returns a JSON type with PostgreSQL [sppb.TypeAnnotationCode_PG_JSONB] semantics.
-func PGJsonB() *sppb.Type {
+// PGJSONB returns a JSON type with PostgreSQL [sppb.TypeAnnotationCode_PG_JSONB] semantics.
+func PGJSONB() *sppb.Type {
 	return SimpleTypeWithAnnotation(sppb.TypeCode_JSON, sppb.TypeAnnotationCode_PG_JSONB)
 }
 
-// PGOid returns an INT64 type with PostgreSQL [sppb.TypeAnnotationCode_PG_OID] semantics.
-func PGOid() *sppb.Type {
+// PGOID returns an INT64 type with PostgreSQL [sppb.TypeAnnotationCode_PG_OID] semantics.
+func PGOID() *sppb.Type {
 	return SimpleTypeWithAnnotation(sppb.TypeCode_INT64, sppb.TypeAnnotationCode_PG_OID)
 }
 
