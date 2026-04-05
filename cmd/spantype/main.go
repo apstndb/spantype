@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
@@ -50,9 +52,16 @@ func parseTypeAnnotationMode(s string) (spantype.TypeAnnotationMode, error) {
 }
 
 func run() error {
-	mode := flag.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
-	typeAnn := flag.String("type-annotation", "suffix", "how to render TypeAnnotation: suffix|omit|primary")
-	flag.Parse()
+	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ContinueOnError)
+	fs.SetOutput(os.Stderr)
+	mode := fs.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
+	typeAnn := fs.String("type-annotation", "suffix", "how to render TypeAnnotation: suffix|omit|primary")
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			return nil
+		}
+		return err
+	}
 
 	formatOpt, err := modeToFormatOption(*mode)
 	if err != nil {

@@ -54,7 +54,8 @@ echo '{"fields":[{"name":"n","type":{"code":"INT64"}}]}' | go run ./cmd/spantype
 ```
 
 Supported modes are `simplest`, `simple`, `normal`, `verbose`, and `more`.  
-Use `--type-annotation=suffix|omit|primary` to control `TypeAnnotation` rendering (default `suffix`).
+Use `--type-annotation=suffix|omit|primary` to control `TypeAnnotation` rendering (default `suffix`).  
+Unknown flags and invalid `--mode` / `--type-annotation` values are reported on stderr with a non-zero exit.
 
 ## Development
 
