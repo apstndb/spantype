@@ -1,5 +1,7 @@
 // Package spantype formats Cloud Spanner google.spanner.v1.Type values with
 // multiple verbosity levels for logs, errors, and debugging output.
+// Dialect [sppb.Type.TypeAnnotation] values (for example PostgreSQL PG_NUMERIC) are
+// controlled by [TypeAnnotationMode] inside [FormatOption].
 package spantype
 
 import (
@@ -69,18 +71,35 @@ const (
 	UnknownModePanic
 )
 
+// TypeAnnotationMode controls how [sppb.Type.TypeAnnotation] is rendered for simple
+// and container types (recursively for ARRAY and STRUCT fields).
+type TypeAnnotationMode int
+
+const (
+	// TypeAnnotationModeSuffix is the default (zero value): append a parenthetical
+	// annotation when set, e.g. `NUMERIC(PG_NUMERIC)`.
+	TypeAnnotationModeSuffix TypeAnnotationMode = iota
+	// TypeAnnotationModeOmit ignores TypeAnnotation and formats the base type only, e.g. `NUMERIC`.
+	TypeAnnotationModeOmit
+	// TypeAnnotationModePrimary uses the annotation as the displayed type label when non-UNSPECIFIED,
+	// e.g. `PG_NUMERIC` instead of `NUMERIC` or `NUMERIC(PG_NUMERIC)`.
+	TypeAnnotationModePrimary
+)
+
 // FormatOption is an option for FormatType, and FormatStructFields.
 type FormatOption struct {
 	// Struct controls STRUCT formatting.
-	Struct  StructMode
+	Struct StructMode
 	// Proto controls PROTO formatting.
-	Proto   ProtoEnumMode
+	Proto ProtoEnumMode
 	// Enum controls ENUM formatting.
-	Enum    ProtoEnumMode
+	Enum ProtoEnumMode
 	// Array controls ARRAY formatting.
-	Array   ArrayMode
+	Array ArrayMode
 	// Unknown controls formatting for unknown type codes.
 	Unknown UnknownMode
+	// TypeAnnotation controls how dialect TypeAnnotation is combined with the base type.
+	TypeAnnotation TypeAnnotationMode
 }
 
 var (
@@ -141,10 +160,22 @@ func formatTypeAnnotationSuffix(ann sppb.TypeAnnotationCode) string {
 }
 
 // FormatType formats Cloud Spanner type using the given FormatOption.
-// When [sppb.Type.TypeAnnotation] is set (e.g. PostgreSQL PG_NUMERIC / PG_JSONB), it is appended
-// as a parenthetical suffix on the formatted type, e.g. `NUMERIC(PG_NUMERIC)`.
+// [FormatOption.TypeAnnotation] selects whether [sppb.Type.TypeAnnotation] is omitted, appended
+// in parentheses after the base type, or used as the primary label (see [TypeAnnotationMode]).
 func FormatType(typ *sppb.Type, opts FormatOption) string {
-	return formatTypeImpl(typ, opts) + formatTypeAnnotationSuffix(typ.GetTypeAnnotation())
+	ann := typ.GetTypeAnnotation()
+	base := formatTypeImpl(typ, opts)
+	switch opts.TypeAnnotation {
+	case TypeAnnotationModeOmit:
+		return base
+	case TypeAnnotationModePrimary:
+		if ann == sppb.TypeAnnotationCode_TYPE_ANNOTATION_CODE_UNSPECIFIED {
+			return base
+		}
+		return ann.String()
+	default:
+		return base + formatTypeAnnotationSuffix(ann)
+	}
 }
 
 func formatTypeImpl(typ *sppb.Type, opts FormatOption) string {

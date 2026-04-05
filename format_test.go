@@ -278,6 +278,7 @@ func TestFormatProtoEnum(t *testing.T) {
 }
 
 func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
+	normal := FormatOptionNormal
 	for _, tt := range []struct {
 		desc string
 		typ  *sppb.Type
@@ -310,11 +311,48 @@ func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
 		},
 	} {
 		t.Run(tt.desc, func(t *testing.T) {
-			if got := FormatTypeNormal(tt.typ); got != tt.want {
-				t.Errorf("FormatTypeNormal want %q, got %q", tt.want, got)
+			if got := FormatType(tt.typ, normal); got != tt.want {
+				t.Errorf("FormatType(FormatOptionNormal) want %q, got %q", tt.want, got)
 			}
 		})
 	}
+}
+
+func TestFormatType_TypeAnnotationMode(t *testing.T) {
+	typ := PGNumeric()
+	opts := FormatOptionNormal
+
+	t.Run("Suffix is default zero value", func(t *testing.T) {
+		var empty FormatOption
+		if got := FormatType(typ, empty); got != "NUMERIC(PG_NUMERIC)" {
+			t.Errorf("zero FormatOption want NUMERIC(PG_NUMERIC), got %q", got)
+		}
+	})
+
+	t.Run("Omit", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModeOmit
+		if got := FormatType(typ, o); got != "NUMERIC" {
+			t.Errorf("got %q", got)
+		}
+	})
+
+	t.Run("Primary", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModePrimary
+		if got := FormatType(typ, o); got != "PG_NUMERIC" {
+			t.Errorf("got %q", got)
+		}
+	})
+
+	t.Run("Primary ARRAY element", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModePrimary
+		arr := ElemTypeToArrayType(PGNumeric())
+		if got := FormatType(arr, o); got != "ARRAY<PG_NUMERIC>" {
+			t.Errorf("got %q", got)
+		}
+	})
 }
 
 func TestFormatTypeCode(t *testing.T) {

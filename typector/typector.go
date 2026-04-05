@@ -1,5 +1,7 @@
 // Package typector provides small constructor helpers for building Cloud
 // Spanner google.spanner.v1.Type values and struct fields in tests and callers.
+// PostgreSQL-oriented types use [sppb.Type.TypeAnnotation]; see [SimpleTypeWithAnnotation],
+// [PGNumeric], [PGJsonB], and [PGOid].
 package typector
 
 import (
