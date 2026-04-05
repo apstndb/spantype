@@ -324,24 +324,27 @@ func TestFormatType_TypeAnnotationMode(t *testing.T) {
 
 	t.Run("Suffix is default zero value", func(t *testing.T) {
 		var empty FormatOption
-		if got := FormatType(typ, empty); got != "NUMERIC(PG_NUMERIC)" {
-			t.Errorf("zero FormatOption want NUMERIC(PG_NUMERIC), got %q", got)
+		const want = "NUMERIC(PG_NUMERIC)"
+		if got := FormatType(typ, empty); got != want {
+			t.Errorf("FormatType zero FormatOption: want %q, got %q", want, got)
 		}
 	})
 
 	t.Run("Omit", func(t *testing.T) {
 		o := opts
 		o.TypeAnnotation = TypeAnnotationModeOmit
-		if got := FormatType(typ, o); got != "NUMERIC" {
-			t.Errorf("got %q", got)
+		const want = "NUMERIC"
+		if got := FormatType(typ, o); got != want {
+			t.Errorf("FormatType Omit: want %q, got %q", want, got)
 		}
 	})
 
 	t.Run("Primary", func(t *testing.T) {
 		o := opts
 		o.TypeAnnotation = TypeAnnotationModePrimary
-		if got := FormatType(typ, o); got != "PG_NUMERIC" {
-			t.Errorf("got %q", got)
+		const want = "PG_NUMERIC"
+		if got := FormatType(typ, o); got != want {
+			t.Errorf("FormatType Primary: want %q, got %q", want, got)
 		}
 	})
 
@@ -349,8 +352,9 @@ func TestFormatType_TypeAnnotationMode(t *testing.T) {
 		o := opts
 		o.TypeAnnotation = TypeAnnotationModePrimary
 		arr := ElemTypeToArrayType(PGNumeric())
-		if got := FormatType(arr, o); got != "ARRAY<PG_NUMERIC>" {
-			t.Errorf("got %q", got)
+		const want = "ARRAY<PG_NUMERIC>"
+		if got := FormatType(arr, o); got != want {
+			t.Errorf("FormatType Primary ARRAY: want %q, got %q", want, got)
 		}
 	})
 }

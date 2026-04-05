@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,12 +16,13 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatalln(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
 
 func modeToFormatOption(mode string) (spantype.FormatOption, error) {
-	switch strings.ToLower(mode) {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
 	case "more":
 		return spantype.FormatOptionMoreVerbose, nil
 	case "verbose":
