@@ -277,6 +277,46 @@ func TestFormatProtoEnum(t *testing.T) {
 	}
 }
 
+func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
+	for _, tt := range []struct {
+		desc string
+		typ  *sppb.Type
+		want string
+	}{
+		{
+			desc: "NUMERIC PG_NUMERIC",
+			typ:  PGNumeric(),
+			want: "NUMERIC(PG_NUMERIC)",
+		},
+		{
+			desc: "JSON PG_JSONB",
+			typ:  PGJsonB(),
+			want: "JSON(PG_JSONB)",
+		},
+		{
+			desc: "INT64 PG_OID",
+			typ:  PGOid(),
+			want: "INT64(PG_OID)",
+		},
+		{
+			desc: "ARRAY<NUMERIC PG_NUMERIC>",
+			typ:  ElemTypeToArrayType(PGNumeric()),
+			want: "ARRAY<NUMERIC(PG_NUMERIC)>",
+		},
+		{
+			desc: "STRUCT with PG annotations (normal mode omits field names)",
+			typ:  MustNameTypeSlicesToStructType([]string{"a", "b"}, []*sppb.Type{PGNumeric(), PGJsonB()}),
+			want: "STRUCT<NUMERIC(PG_NUMERIC), JSON(PG_JSONB)>",
+		},
+	} {
+		t.Run(tt.desc, func(t *testing.T) {
+			if got := FormatTypeNormal(tt.typ); got != tt.want {
+				t.Errorf("FormatTypeNormal want %q, got %q", tt.want, got)
+			}
+		})
+	}
+}
+
 func TestFormatTypeCode(t *testing.T) {
 	tests := []struct {
 		desc        string

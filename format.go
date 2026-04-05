@@ -133,8 +133,21 @@ func lastCut(s, sep string) (before string, after string, found bool) {
 	return "", s, false
 }
 
+func formatTypeAnnotationSuffix(ann sppb.TypeAnnotationCode) string {
+	if ann == sppb.TypeAnnotationCode_TYPE_ANNOTATION_CODE_UNSPECIFIED {
+		return ""
+	}
+	return "(" + ann.String() + ")"
+}
+
 // FormatType formats Cloud Spanner type using the given FormatOption.
+// When [sppb.Type.TypeAnnotation] is set (e.g. PostgreSQL PG_NUMERIC / PG_JSONB), it is appended
+// as a parenthetical suffix on the formatted type, e.g. `NUMERIC(PG_NUMERIC)`.
 func FormatType(typ *sppb.Type, opts FormatOption) string {
+	return formatTypeImpl(typ, opts) + formatTypeAnnotationSuffix(typ.GetTypeAnnotation())
+}
+
+func formatTypeImpl(typ *sppb.Type, opts FormatOption) string {
 	code := typ.GetCode()
 	switch code {
 	case sppb.TypeCode_ARRAY:

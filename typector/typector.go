@@ -53,6 +53,27 @@ func CodeToSimpleType(code sppb.TypeCode) *sppb.Type {
 	return &sppb.Type{Code: code}
 }
 
+// SimpleTypeWithAnnotation returns a simple type with the given code and optional
+// [sppb.Type.TypeAnnotation] (use [sppb.TypeAnnotationCode_TYPE_ANNOTATION_CODE_UNSPECIFIED] for none).
+func SimpleTypeWithAnnotation(code sppb.TypeCode, ann sppb.TypeAnnotationCode) *sppb.Type {
+	return &sppb.Type{Code: code, TypeAnnotation: ann}
+}
+
+// PGNumeric returns a NUMERIC type with PostgreSQL [sppb.TypeAnnotationCode_PG_NUMERIC] semantics.
+func PGNumeric() *sppb.Type {
+	return SimpleTypeWithAnnotation(sppb.TypeCode_NUMERIC, sppb.TypeAnnotationCode_PG_NUMERIC)
+}
+
+// PGJsonB returns a JSON type with PostgreSQL [sppb.TypeAnnotationCode_PG_JSONB] semantics.
+func PGJsonB() *sppb.Type {
+	return SimpleTypeWithAnnotation(sppb.TypeCode_JSON, sppb.TypeAnnotationCode_PG_JSONB)
+}
+
+// PGOid returns an INT64 type with PostgreSQL [sppb.TypeAnnotationCode_PG_OID] semantics.
+func PGOid() *sppb.Type {
+	return SimpleTypeWithAnnotation(sppb.TypeCode_INT64, sppb.TypeAnnotationCode_PG_OID)
+}
+
 // ElemCodeToArrayType returns an ARRAY type with the given element type code.
 func ElemCodeToArrayType(code sppb.TypeCode) *sppb.Type {
 	return ElemTypeToArrayType(CodeToSimpleType(code))
