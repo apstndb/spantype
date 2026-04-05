@@ -168,17 +168,16 @@ func formatTypeAnnotationSuffix(ann sppb.TypeAnnotationCode) string {
 // in parentheses after the base type, or used as the primary label (see [TypeAnnotationMode]).
 func FormatType(typ *sppb.Type, opts FormatOption) string {
 	ann := typ.GetTypeAnnotation()
-	base := formatTypeImpl(typ, opts)
 	switch opts.TypeAnnotation {
 	case TypeAnnotationModeOmit:
-		return base
+		return formatTypeImpl(typ, opts)
 	case TypeAnnotationModePrimary:
-		if ann == sppb.TypeAnnotationCode_TYPE_ANNOTATION_CODE_UNSPECIFIED {
-			return base
+		if ann != sppb.TypeAnnotationCode_TYPE_ANNOTATION_CODE_UNSPECIFIED {
+			return ann.String()
 		}
-		return ann.String()
+		return formatTypeImpl(typ, opts)
 	default:
-		return base + formatTypeAnnotationSuffix(ann)
+		return formatTypeImpl(typ, opts) + formatTypeAnnotationSuffix(ann)
 	}
 }
 

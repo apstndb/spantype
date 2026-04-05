@@ -59,14 +59,15 @@ func run() error {
 	mode := fs.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
 	typeAnn := fs.String("type-annotation", "suffix", "how to render TypeAnnotation: suffix|omit|primary")
 	if err := fs.Parse(os.Args[1:]); err != nil {
-		fs.SetOutput(os.Stderr)
 		if errors.Is(err, flag.ErrHelp) {
+			fs.SetOutput(os.Stderr)
 			fs.Usage()
 			return nil
 		}
-		fmt.Fprintln(os.Stderr, err)
+		var usage strings.Builder
+		fs.SetOutput(&usage)
 		fs.Usage()
-		os.Exit(1)
+		return fmt.Errorf("%w\n%s", err, strings.TrimRight(usage.String(), "\n"))
 	}
 
 	formatOpt, err := modeToFormatOption(*mode)
