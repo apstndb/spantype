@@ -23,6 +23,17 @@ The root package formats Spanner types with configurable verbosity. For a type l
 
 If you need custom behavior, call `FormatType` with `FormatOption`.
 
+**`Type.TypeAnnotation` (PostgreSQL dialect markers)**  
+[`FormatOption.TypeAnnotation`](https://pkg.go.dev/github.com/apstndb/spantype#FormatOption) selects how non-unspecified [`TypeAnnotationCode`](https://pkg.go.dev/cloud.google.com/go/spanner/apiv1/spannerpb#TypeAnnotationCode) values are shown:
+
+| `TypeAnnotationMode` | Example (`NUMERIC` + `PG_NUMERIC`) |
+| --- | --- |
+| `TypeAnnotationModeSuffix` (default, zero value) | `NUMERIC(PG_NUMERIC)` |
+| `TypeAnnotationModeOmit` | `NUMERIC` |
+| `TypeAnnotationModePrimary` | `PG_NUMERIC` |
+
+The same mode applies recursively inside `ARRAY<>` and `STRUCT<>` fields.
+
 ### `typector`
 
 `typector` is a constructor helper package for building Spanner type values.
@@ -31,6 +42,7 @@ If you need custom behavior, call `FormatType` with `FormatOption`.
 - Use shorthand constructors such as `Int64()`, `String()`, and `UUID()` for common scalar types.
 - Use `ElemCodeToArrayType` / `ElemTypeToArrayType` for arrays.
 - Use `FQNToProtoType` / `FQNToEnumType` for `PROTO` and `ENUM`, which require a fully-qualified name.
+- Use `SimpleTypeWithAnnotation`, `PGNumeric`, `PGJSONB`, or `PGOID` when you need PostgreSQL [`TypeAnnotation`](https://pkg.go.dev/cloud.google.com/go/spanner/apiv1/spannerpb#Type) markers on scalars.
 - Prefer `...Code...` forms when your input is a type code, and `...Type...` forms when you already have `*spannerpb.Type`.
 
 ## CLI Example
@@ -41,7 +53,9 @@ If you need custom behavior, call `FormatType` with `FormatOption`.
 echo '{"fields":[{"name":"n","type":{"code":"INT64"}}]}' | go run ./cmd/spantype --mode=verbose
 ```
 
-Supported modes are `simplest`, `simple`, `normal`, `verbose`, and `more`.
+Supported modes are `simplest`, `simple`, `normal`, `verbose`, and `more`.  
+Use `--type-annotation=suffix|omit|primary` to control `TypeAnnotation` rendering (default `suffix`).  
+Unknown flags and invalid `--mode` / `--type-annotation` values are reported on stderr with a non-zero exit.
 
 ## Development
 

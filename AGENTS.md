@@ -41,6 +41,8 @@ Recent history uses short, imperative commit subjects with sentence case, for ex
 - test evidence such as `go test ./...`,
 - example input/output when CLI formatting changes.
 
+After pushing commits that address review feedback, request a fresh Copilot review with `gh copilot-review request <pr> --wait` (requires the [`gh-copilot-review`](https://github.com/apstndb/gh-copilot-review) `gh` extension), unless the user asks not to.
+
 ## Release Notes
 
 Use GitHub Releases for release notes instead of maintaining a repository changelog. Start from GitHub's auto-generated notes, then review `git log` for the range being released and add any missed consumer-facing changes such as new `typector` helpers, formatting-mode behavior, or compatibility notes.

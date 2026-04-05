@@ -1,12 +1,12 @@
 package main
 
 import (
-	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
@@ -15,33 +15,70 @@ import (
 )
 
 func main() {
-	if err := run(context.Background()); err != nil {
-		log.Fatalln(err)
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
 
-func modeToFormatOption(mode string) spantype.FormatOption {
-	switch strings.ToLower(mode) {
+func modeToFormatOption(mode string) (spantype.FormatOption, error) {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
 	case "more":
-		return spantype.FormatOptionMoreVerbose
+		return spantype.FormatOptionMoreVerbose, nil
 	case "verbose":
-		return spantype.FormatOptionVerbose
+		return spantype.FormatOptionVerbose, nil
 	case "normal":
-		return spantype.FormatOptionNormal
+		return spantype.FormatOptionNormal, nil
 	case "simplest":
-		return spantype.FormatOptionSimplest
+		return spantype.FormatOptionSimplest, nil
 	case "simple":
-		return spantype.FormatOptionSimple
+		return spantype.FormatOptionSimple, nil
 	default:
-		panic("unknown mode: " + mode)
+		return spantype.FormatOption{}, fmt.Errorf("unknown mode %q (want simplest|simple|normal|verbose|more)", mode)
 	}
 }
 
-func run(ctx context.Context) error {
-	mode := flag.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
-	flag.Parse()
+func parseTypeAnnotationMode(s string) (spantype.TypeAnnotationMode, error) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "suffix", "":
+		return spantype.TypeAnnotationModeSuffix, nil
+	case "omit":
+		return spantype.TypeAnnotationModeOmit, nil
+	case "primary":
+		return spantype.TypeAnnotationModePrimary, nil
+	default:
+		return 0, fmt.Errorf("unknown type-annotation mode %q (want suffix|omit|primary)", s)
+	}
+}
 
-	formatOpt := modeToFormatOption(*mode)
+func run() error {
+	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ContinueOnError)
+	// Discard while parsing so we do not duplicate the parse error on stderr when
+	// we print the message and usage ourselves (ContinueOnError writes to Output).
+	fs.SetOutput(io.Discard)
+	mode := fs.String("mode", "verbose", "format mode (simplest|simple|normal|verbose|more)")
+	typeAnn := fs.String("type-annotation", "suffix", "how to render TypeAnnotation: suffix|omit|primary")
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			fs.SetOutput(os.Stderr)
+			fs.Usage()
+			return nil
+		}
+		var usage strings.Builder
+		fs.SetOutput(&usage)
+		fs.Usage()
+		return fmt.Errorf("%w\n%s", err, strings.TrimRight(usage.String(), "\n"))
+	}
+
+	formatOpt, err := modeToFormatOption(*mode)
+	if err != nil {
+		return err
+	}
+	annMode, err := parseTypeAnnotationMode(*typeAnn)
+	if err != nil {
+		return err
+	}
+	formatOpt.TypeAnnotation = annMode
 
 	b, err := io.ReadAll(os.Stdin)
 	if err != nil {

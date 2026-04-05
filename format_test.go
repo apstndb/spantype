@@ -277,6 +277,88 @@ func TestFormatProtoEnum(t *testing.T) {
 	}
 }
 
+func TestFormatType_PostgreSQLAnnotations(t *testing.T) {
+	normal := FormatOptionNormal
+	for _, tt := range []struct {
+		desc string
+		typ  *sppb.Type
+		want string
+	}{
+		{
+			desc: "NUMERIC PG_NUMERIC",
+			typ:  PGNumeric(),
+			want: "NUMERIC(PG_NUMERIC)",
+		},
+		{
+			desc: "JSON PG_JSONB",
+			typ:  PGJSONB(),
+			want: "JSON(PG_JSONB)",
+		},
+		{
+			desc: "INT64 PG_OID",
+			typ:  PGOID(),
+			want: "INT64(PG_OID)",
+		},
+		{
+			desc: "ARRAY<NUMERIC PG_NUMERIC>",
+			typ:  ElemTypeToArrayType(PGNumeric()),
+			want: "ARRAY<NUMERIC(PG_NUMERIC)>",
+		},
+		{
+			desc: "STRUCT with PG annotations (normal mode omits field names)",
+			typ:  MustNameTypeSlicesToStructType([]string{"a", "b"}, []*sppb.Type{PGNumeric(), PGJSONB()}),
+			want: "STRUCT<NUMERIC(PG_NUMERIC), JSON(PG_JSONB)>",
+		},
+	} {
+		t.Run(tt.desc, func(t *testing.T) {
+			if got := FormatType(tt.typ, normal); got != tt.want {
+				t.Errorf("FormatType(FormatOptionNormal) want %q, got %q", tt.want, got)
+			}
+		})
+	}
+}
+
+func TestFormatType_TypeAnnotationMode(t *testing.T) {
+	typ := PGNumeric()
+	opts := FormatOptionNormal
+
+	t.Run("Suffix is default zero value", func(t *testing.T) {
+		var empty FormatOption
+		const want = "NUMERIC(PG_NUMERIC)"
+		if got := FormatType(typ, empty); got != want {
+			t.Errorf("FormatType zero FormatOption: want %q, got %q", want, got)
+		}
+	})
+
+	t.Run("Omit", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModeOmit
+		const want = "NUMERIC"
+		if got := FormatType(typ, o); got != want {
+			t.Errorf("FormatType Omit: want %q, got %q", want, got)
+		}
+	})
+
+	t.Run("Primary", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModePrimary
+		const want = "PG_NUMERIC"
+		if got := FormatType(typ, o); got != want {
+			t.Errorf("FormatType Primary: want %q, got %q", want, got)
+		}
+	})
+
+	t.Run("Primary ARRAY element", func(t *testing.T) {
+		o := opts
+		o.TypeAnnotation = TypeAnnotationModePrimary
+		arr := ElemTypeToArrayType(PGNumeric())
+		const want = "ARRAY<PG_NUMERIC>"
+		if got := FormatType(arr, o); got != want {
+			t.Errorf("FormatType Primary ARRAY: want %q, got %q", want, got)
+		}
+	})
+}
+
 func TestFormatTypeCode(t *testing.T) {
 	tests := []struct {
 		desc        string
