@@ -39,6 +39,11 @@ func FormatTypePostgreSQL(typ *sppb.Type) string {
 }
 
 func formatTypePostgreSQLImpl(typ *sppb.Type) string {
+	// Recursive positions (array elements, struct field types) may pass nil;
+	// the explicit check keeps the behavior independent of getter nil-safety.
+	if typ == nil {
+		return "unknown"
+	}
 	switch typ.GetCode() {
 	case sppb.TypeCode_ARRAY:
 		elem := typ.GetArrayElementType()
