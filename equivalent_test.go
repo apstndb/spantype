@@ -1,0 +1,48 @@
+package spantype_test
+
+import (
+	"testing"
+
+	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
+	"github.com/apstndb/spantype"
+	"github.com/apstndb/spantype/typector"
+	"google.golang.org/protobuf/proto"
+)
+
+func TestEquivalentTypesScalar(t *testing.T) {
+	t.Parallel()
+
+	a := typector.Int64()
+	b := typector.CodeToSimpleType(sppb.TypeCode_INT64)
+	if !spantype.EquivalentTypes(a, b) {
+		t.Fatalf("INT64 types should be equivalent")
+	}
+	if spantype.EquivalentTypes(a, typector.String()) {
+		t.Fatalf("INT64 and STRING should not be equivalent")
+	}
+}
+
+func TestEquivalentTypesArray(t *testing.T) {
+	t.Parallel()
+
+	elem := typector.Int64()
+	a := typector.ElemTypeToArrayType(elem)
+	b := typector.ElemTypeToArrayType(typector.CodeToSimpleType(sppb.TypeCode_INT64))
+	if !spantype.EquivalentTypes(a, b) {
+		t.Fatalf("ARRAY<INT64> types should be equivalent")
+	}
+}
+
+func TestEquivalentTypesStructIgnoresFieldNames(t *testing.T) {
+	t.Parallel()
+
+	fieldType := typector.Int64()
+	a := typector.NameTypeToStructType("a", fieldType)
+	b := typector.NameTypeToStructType("b", fieldType)
+	if proto.Equal(a, b) {
+		t.Fatalf("proto.Equal should distinguish STRUCT field names")
+	}
+	if !spantype.EquivalentTypes(a, b) {
+		t.Fatalf("EquivalentTypes should ignore field names")
+	}
+}
