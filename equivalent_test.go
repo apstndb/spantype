@@ -46,3 +46,31 @@ func TestEquivalentTypesStructIgnoresFieldNames(t *testing.T) {
 		t.Fatalf("EquivalentTypes should ignore field names")
 	}
 }
+
+func TestEquivalentTypesPGNumericAnnotation(t *testing.T) {
+	t.Parallel()
+
+	if spantype.EquivalentTypes(typector.Numeric(), typector.PGNumeric()) {
+		t.Fatalf("GoogleSQL NUMERIC and PG_NUMERIC should not be equivalent")
+	}
+}
+
+func TestEquivalentTypesProtoFQNMismatch(t *testing.T) {
+	t.Parallel()
+
+	a := typector.FQNToProtoType("examples.Foo")
+	b := typector.FQNToProtoType("examples.Bar")
+	if spantype.EquivalentTypes(a, b) {
+		t.Fatalf("PROTO types with different FQN should not be equivalent")
+	}
+}
+
+func TestEquivalentTypesEnumFQNMismatch(t *testing.T) {
+	t.Parallel()
+
+	a := typector.FQNToEnumType("examples.Color")
+	b := typector.FQNToEnumType("examples.Size")
+	if spantype.EquivalentTypes(a, b) {
+		t.Fatalf("ENUM types with different FQN should not be equivalent")
+	}
+}

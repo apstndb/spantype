@@ -5,11 +5,26 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// EquivalentTypes reports whether a and b are Spanner-equivalent type metadata.
-// Scalar types require proto.Equal metadata. ARRAY types require equivalent
-// element types. STRUCT types require the same number of fields with pairwise
-// equivalent field types; field names are not compared. This matches identity
-// CAST and ARRAY cast equivalence in GoogleSQL semantic layers.
+// EquivalentTypes reports whether a and b are Spanner-equivalent [cloud.google.com/go/spanner/apiv1/spannerpb.Type]
+// metadata for identity retyping: a value of either type can carry the same wire
+// payload when only Type metadata differs.
+//
+// Rules follow [google.spanner.v1.Type] shape
+// (https://github.com/googleapis/googleapis/blob/master/google/spanner/v1/type.proto)
+// and GoogleSQL supertypes for composite types
+// (https://docs.cloud.google.com/spanner/docs/reference/standard-sql/conversion_rules#supertypes):
+//
+//   - Scalars: proto.Equal, including [sppb.Type.TypeAnnotation] and
+//     [sppb.Type.ProtoTypeFqn] for PROTO and ENUM.
+//   - ARRAY: equivalent [sppb.Type.ArrayElementType].
+//   - STRUCT: same number of fields with pairwise equivalent field types by
+//     position; field names are not compared.
+//
+// This is narrower than the Cast table in the same conversion-rules page:
+// types that can CAST to one another (for example INT64 and FLOAT64) are not
+// necessarily equivalent. Use EquivalentTypes only when semantics require an
+// identity path (no value conversion), such as ARRAY/STRUCT layout checks or
+// gcvctor.WithEquivalentType.
 func EquivalentTypes(a, b *sppb.Type) bool {
 	if a == nil || b == nil {
 		return a == nil && b == nil
