@@ -2,7 +2,6 @@ package spantype
 
 import (
 	sppb "cloud.google.com/go/spanner/apiv1/spannerpb"
-	"google.golang.org/protobuf/proto"
 )
 
 // EquivalentTypes reports whether a and b are Spanner-equivalent [cloud.google.com/go/spanner/apiv1/spannerpb.Type]
@@ -65,6 +64,15 @@ func EquivalentTypes(a, b *sppb.Type) bool {
 		}
 		return true
 	default:
-		return proto.Equal(a, b)
+		// Code, TypeAnnotation, and ProtoTypeFqn already match. For scalar
+		// codes, reject malformed container fields without proto.Equal so
+		// unknown protobuf fields from newer servers do not break identity checks.
+		if a.GetArrayElementType() != nil || b.GetArrayElementType() != nil {
+			return false
+		}
+		if a.GetStructType() != nil || b.GetStructType() != nil {
+			return false
+		}
+		return true
 	}
 }
