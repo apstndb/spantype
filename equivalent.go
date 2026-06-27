@@ -27,9 +27,15 @@ import (
 // gcvctor.WithEquivalentType.
 func EquivalentTypes(a, b *sppb.Type) bool {
 	if a == nil || b == nil {
-		return a == nil && b == nil
+		return a == b
 	}
 	if a.GetCode() != b.GetCode() {
+		return false
+	}
+	if a.GetTypeAnnotation() != b.GetTypeAnnotation() {
+		return false
+	}
+	if a.GetProtoTypeFqn() != b.GetProtoTypeFqn() {
 		return false
 	}
 	switch a.GetCode() {
@@ -39,7 +45,7 @@ func EquivalentTypes(a, b *sppb.Type) bool {
 		aStruct := a.GetStructType()
 		bStruct := b.GetStructType()
 		if aStruct == nil || bStruct == nil {
-			return aStruct == nil && bStruct == nil
+			return aStruct == bStruct
 		}
 		aFields := aStruct.GetFields()
 		bFields := bStruct.GetFields()

@@ -74,3 +74,21 @@ func TestEquivalentTypesEnumFQNMismatch(t *testing.T) {
 		t.Fatalf("ENUM types with different FQN should not be equivalent")
 	}
 }
+
+func TestEquivalentTypesArrayContainerAnnotationMismatch(t *testing.T) {
+	t.Parallel()
+
+	elem := typector.Int64()
+	a := &sppb.Type{
+		Code:             sppb.TypeCode_ARRAY,
+		ArrayElementType: elem,
+	}
+	b := &sppb.Type{
+		Code:             sppb.TypeCode_ARRAY,
+		ArrayElementType: typector.CodeToSimpleType(sppb.TypeCode_INT64),
+		TypeAnnotation:   sppb.TypeAnnotationCode_PG_NUMERIC,
+	}
+	if spantype.EquivalentTypes(a, b) {
+		t.Fatalf("ARRAY types with different container TypeAnnotation should not be equivalent")
+	}
+}
